@@ -1,0 +1,112 @@
+@use "../../responsive.scss" as *;
+
+
+nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
+
+    a{
+        transition: all ;
+        @include sm{
+            display: none;
+        }
+
+        &:hover{
+            scale: 1.03;
+        }
+    }
+
+    .left{
+        flex:3; 
+        display: flex;
+        align-items: center;
+        gap: 50px;
+        .logo{
+            font-weight: bold;
+            font-size: 20px;
+            display: flex;
+            gap:10px;
+            align-items: center;
+
+            img{
+                height: 50px;
+            }
+
+            span{
+                @include md{
+                    display: none;
+                }
+
+                @include sm{
+                    display: initial;
+                }
+            }
+
+        }
+    }
+    .right{
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        height: 100%;
+        flex:2;
+        background-color: #FAF0CA;
+
+        @include md{
+            background-color: transparent;
+        }
+
+        a{
+            margin-right: 20px;
+            padding: 12px 24px;
+            z-index: 1;
+        }
+
+        .register{
+            background-color: #0D3B66;
+            border-radius: 8px;
+            color: white;
+        }
+        .menuIcon{
+            display: none;
+            z-index: 1;
+
+            img{
+                cursor: pointer;
+            }
+
+            @include sm{
+                display: initial;
+            }
+        }
+
+        .sideMenu{
+            position: absolute;
+            top: 0;
+            right: -50%;
+            background-color: blue;
+            color: white;
+            height: 100vh;
+            width: 50%;
+            transition: all 1s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+
+            &.active{
+                right: 0;
+                    
+            }
+
+            @include sm{
+                a{
+                display: initial;
+                }
+            }
+        }
+    }
+}
