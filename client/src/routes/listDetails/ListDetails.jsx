@@ -58,7 +58,7 @@ export default function ListDetails() {
           <div className="sizes">
             <div className="size">
               <img src="/size.png" alt="" />
-              <span>80 sqft</span>
+              <span>80 m</span>
             </div>
             <div className="size">
               <img src="/bed.png" alt="" />
@@ -94,9 +94,11 @@ export default function ListDetails() {
             </div>
           </div>
           <p className="title">Location</p>
+
           <div className="mapContainer">
             <Map items={[singlePostData]} />
           </div>
+
           <div className="buttons">
             <button>
               <img src="/chat.png" alt="" />
