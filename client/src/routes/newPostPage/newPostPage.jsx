@@ -21,6 +21,12 @@ function NewPostPage() {
             </div>
             <div className="item description">
               <label htmlFor="desc">Description</label>
+              <textarea
+                id="description"
+                name="description"
+                rows="4"
+                cols="50"
+              ></textarea>
             </div>
             <div className="item">
               <label htmlFor="city">City</label>
@@ -104,7 +110,8 @@ function NewPostPage() {
           </form>
         </div>
       </div>
-      <div className="sideContainer"></div>
+      {/*
+      <div className="sideContainer"></div>  */}
     </div>
   );
 }
