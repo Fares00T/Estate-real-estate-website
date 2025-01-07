@@ -1,53 +1,30 @@
 @use "../../responsive.scss" as *;
 
 .listPage {
-    display: flex;
+  display: flex;
+  height: 100%;
+
+  .listContainer {
+    flex: 3;
     height: 100%;
 
-     ::-webkit-scrollbar {
-    width: 0px;
-  }
-  
-
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1; 
-  }
-   
-  
-  ::-webkit-scrollbar-thumb {
-    background: #888; 
-  }
-  
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: #555; 
-  }
- 
-  
-  
-    .listCont {
-      flex: 3;
+    .wrapper{
       height: 100%;
-  
-      .wrapper{
-        height: 100%;
-        padding-right: 50px;
-        display: flex;
-        flex-direction: column;
-        gap: 50px;
-        overflow-y: scroll;
-        padding-bottom: 50px;
-      }
-    }
-    .mapCont {
-      flex: 2;
-      height: 100%;
-      background-color: #fcf5f3;
-  
-      @include md{
-        display: none;
-      }
+      padding-right: 50px;
+      display: flex;
+      flex-direction: column;
+      gap: 50px;
+      overflow-y: scroll;
+      padding-bottom: 50px;
     }
   }
+  .mapContainer {
+    flex: 2;
+    height: 100%;
+    background-color: #fcf5f3;
 
-
+    @include md{
+      display: none;
+    }
+  }
+}
