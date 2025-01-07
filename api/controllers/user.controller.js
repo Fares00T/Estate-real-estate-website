@@ -91,6 +91,7 @@ export const savePost = async (req, res) => {
     });
 
     if (savedPost) {
+      // If the post is already saved, remove it
       await prisma.savedPost.delete({
         where: {
           id: savedPost.id,
@@ -98,6 +99,7 @@ export const savePost = async (req, res) => {
       });
       res.status(200).json({ message: "Post removed from saved list" });
     } else {
+      // If the post is not saved, add it to the saved list
       await prisma.savedPost.create({
         data: {
           userId: tokenUserId,
@@ -107,8 +109,10 @@ export const savePost = async (req, res) => {
       res.status(200).json({ message: "Post saved" });
     }
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Failed to delete users!" });
+    console.error("Error saving post:", err);
+    res
+      .status(500)
+      .json({ message: "Failed to save post!", error: err.message });
   }
 };
 
