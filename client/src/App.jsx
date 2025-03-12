@@ -5,7 +5,7 @@ import { Layout, RequireAdmin, RequireAuth } from "./routes/layout/Layout";
 import ListDetails from "./routes/listDetails/ListDetails";
 import Profile from "./routes/profile/Profile";
 import Login from "./routes/login/login";
-import Register from "./routes/register/Register";
+import Register from "./routes/register/register";
 import NewPostPage from "./routes/newPostPage/newPostPage";
 import ProfileUpdatePage from "./routes/profileupdate/profileUpdate";
 import {
