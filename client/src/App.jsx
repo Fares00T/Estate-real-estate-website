@@ -1,7 +1,7 @@
 import Home from "./routes/homePage/Home";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ListPage from "./routes/listPage/ListPage";
-import { Layout, RequireAuth } from "./routes/layout/layout";
+import { Layout, RequireAdmin, RequireAuth } from "./routes/layout/layout";
 import ListDetails from "./routes/listDetails/ListDetails";
 import Profile from "./routes/profile/Profile";
 import Login from "./routes/login/login";
@@ -13,6 +13,7 @@ import {
   profilePageLoader,
   singlePageLoader,
 } from "./components/lib/loaders";
+import AdminPage from "./routes/Admin/Admin";
 
 function App() {
   const router = createBrowserRouter([
@@ -62,6 +63,13 @@ function App() {
           path: "/add",
           element: <NewPostPage />,
         },
+      ],
+    },
+    {
+      path: "/admin",
+      element: <RequireAdmin />,
+      children: [
+        { path: "/admin", element: <AdminPage />, loader: listPageLoader },
       ],
     },
   ]);

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import "./card.scss";
 
-function Card({ item }) {
+function Card({ item, onDelete }) {
   return (
     <div className="card">
       <Link to={`/${item.id}`} className="imageContainer">
@@ -36,6 +36,13 @@ function Card({ item }) {
             </div>
           </div>
         </div>
+
+        {/* Only show the delete button if onDelete is provided */}
+        {onDelete && (
+          <button className="deleteBtn" onClick={() => onDelete(item.id)}>
+            Delete
+          </button>
+        )}
       </div>
     </div>
   );

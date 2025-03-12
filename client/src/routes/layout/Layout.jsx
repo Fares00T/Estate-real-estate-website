@@ -17,22 +17,22 @@ export default function Layout() {
   );
 }
 
+// ✅ Ensure the user is authenticated before accessing protected routes
 function RequireAuth() {
   const { currentUser } = useContext(AuthContext);
 
   if (!currentUser) return <Navigate to="/login" />;
-  else {
-    return (
-      <div className="layout">
-        <div className="navbar">
-          <Navbar />
-        </div>
-        <div className="content">
-          <Outlet />
-        </div>
-      </div>
-    );
-  }
+  return <Layout />;
 }
 
-export { Layout, RequireAuth };
+// ✅ Ensure only ADMIN users can access the admin page
+function RequireAdmin() {
+  const { currentUser } = useContext(AuthContext);
+
+  if (!currentUser) return <Navigate to="/login" />;
+  if (currentUser.role !== "admin") return <Navigate to="/" />; // Redirect non-admins
+
+  return <Layout />;
+}
+
+export { Layout, RequireAuth, RequireAdmin };
