@@ -25,6 +25,7 @@ function Navbar() {
         <a href="/">About</a>
         <a href="/">Contact</a>
         <a href="/">Agents</a>
+        {currentUser?.role === "admin" && <Link to="/admin">Admin</Link>}
       </div>
       <div className="right">
         {currentUser ? (

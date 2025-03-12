@@ -3,28 +3,34 @@ import Slider from "../../components/slider/Slider.jsx";
 import Map from "../../components/map/Map";
 import { useContext, useState } from "react";
 import apiRequest from "../../components/lib/apiRequest";
-import {
-  useNavigate,
-  useLoaderData,
-  useRouteLoaderData,
-} from "react-router-dom";
+import { useNavigate, useLoaderData } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { AuthContext } from "../../context/AuthContext";
-import { singlePostData, userData } from "../../components/lib/dummydata.js";
 
 export default function ListDetails() {
   const post = useLoaderData();
-  console.log(post);
-
   const [saved, setSaved] = useState(post.isSaved);
   const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+
+  const handleDelete = async () => {
+    try {
+      const response = await apiRequest.delete(`/posts/${post.id}`);
+
+      if (response.status === 200) {
+        navigate("/admin"); // Redirect after deletion
+      }
+    } catch (err) {
+      console.log(err);
+      alert("Failed to delete post.");
+    }
+  };
 
   const handleSave = async () => {
     if (!currentUser) {
       navigate("/login");
     }
-    // AFTER REACT 19 UPDATE TO USEOPTIMISTIK HOOK
     setSaved((prev) => !prev);
     try {
       await apiRequest.post("/users/save", { postId: post.id });
@@ -112,35 +118,6 @@ export default function ListDetails() {
               <span>{post.bathroom} bathroom</span>
             </div>
           </div>
-          <p className="title">Nearby Places</p>
-          <div className="listHorizontal">
-            <div className="feature">
-              <img src="/school.png" alt="" />
-              <div className="featureText">
-                <span>School</span>
-                <p>
-                  {post.postDetail.school > 999
-                    ? post.postDetail.school / 1000 + "km"
-                    : post.postDetail.school + "m"}{" "}
-                  away
-                </p>
-              </div>
-            </div>
-            <div className="feature">
-              <img src="/pet.png" alt="" />
-              <div className="featureText">
-                <span>Bus Stop</span>
-                <p>{post.postDetail.bus}m away</p>
-              </div>
-            </div>
-            <div className="feature">
-              <img src="/fee.png" alt="" />
-              <div className="featureText">
-                <span>Restaurant</span>
-                <p>{post.postDetail.restaurant}m away</p>
-              </div>
-            </div>
-          </div>
           <p className="title">Location</p>
           <div className="mapContainer">
             <Map items={[post]} />
@@ -150,11 +127,17 @@ export default function ListDetails() {
               <img src="/chat.png" alt="" />
               Send a Message
             </button>
+            {currentUser?.role === "admin" && (
+              <button
+                onClick={() => setShowModal(true)}
+                style={{ backgroundColor: "red", color: "white" }}
+              >
+                Delete
+              </button>
+            )}
             <button
               onClick={handleSave}
-              style={{
-                backgroundColor: saved ? "#fece51" : "white",
-              }}
+              style={{ backgroundColor: saved ? "#fece51" : "white" }}
             >
               <img src="/save.png" alt="" />
               {saved ? "Place Saved" : "Save the Place"}
@@ -162,6 +145,24 @@ export default function ListDetails() {
           </div>
         </div>
       </div>
+
+      {showModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <h2>Confirm Deletion</h2>
+            <p>Are you sure you want to delete this post?</p>
+            <div className="modal-buttons">
+              <button onClick={() => setShowModal(false)}>Cancel</button>
+              <button
+                onClick={handleDelete}
+                style={{ backgroundColor: "red", color: "white" }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
