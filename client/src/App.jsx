@@ -1,7 +1,7 @@
 import Home from "./routes/homePage/Home";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ListPage from "./routes/listPage/ListPage";
-import { Layout, RequireAdmin, RequireAuth } from "./routes/layout/layout";
+import { Layout, RequireAdmin, RequireAuth } from "./routes/layout/Layout";
 import ListDetails from "./routes/listDetails/ListDetails";
 import Profile from "./routes/profile/Profile";
 import Login from "./routes/login/login";
