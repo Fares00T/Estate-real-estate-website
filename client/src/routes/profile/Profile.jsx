@@ -13,6 +13,15 @@ function Profile() {
 
   const navigate = useNavigate();
 
+  const handleDelete = async (postId) => {
+    try {
+      await apiRequest.delete(`/posts/${postId}`);
+      navigate(0); // Refresh page
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await apiRequest.post("/auth/logout");
@@ -22,6 +31,7 @@ function Profile() {
       console.log(err);
     }
   };
+
   return (
     <div className="profilePage">
       <div className="details">
@@ -56,7 +66,13 @@ function Profile() {
               resolve={data.postResponse}
               errorElement={<p>Error loading posts!</p>}
             >
-              {(postResponse) => <List posts={postResponse.data.userPosts} />}
+              {(postResponse) => (
+                <List
+                  posts={postResponse?.data?.userPosts || []} // Ensure posts is at least an empty array
+                  onDelete={handleDelete}
+                  currentUser={currentUser}
+                />
+              )}
             </Await>
           </Suspense>
           <div className="title">
@@ -67,25 +83,16 @@ function Profile() {
               resolve={data.postResponse}
               errorElement={<p>Error loading posts!</p>}
             >
-              {(postResponse) => <List posts={postResponse.data.savedPosts} />}
+              {(postResponse) => (
+                <List
+                  posts={postResponse.data.savedPosts}
+                  onDelete={handleDelete}
+                />
+              )}
             </Await>
           </Suspense>
         </div>
       </div>
-      {/*
-      <div className="chatContainer">
-        <div className="wrapper">
-          <Suspense fallback={<p>Loading...</p>}>
-            <Await
-              resolve={data.chatResponse}
-              errorElement={<p>Error loading chats!</p>}
-            >
-              {(chatResponse) => <Chat chats={chatResponse.data} />}
-            </Await>
-          </Suspense>
-        </div>
-      </div>
-      */}
     </div>
   );
 }

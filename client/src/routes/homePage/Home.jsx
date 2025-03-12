@@ -33,9 +33,10 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <div className="imgcont">
-        {/*  <img src="/src/routes/homePage/bg.png" />*/}
+      {/* <div className="imgcont">
+        <img src="/src/routes/homePage/bg.png"></img>
       </div>
+      */}
     </div>
   );
 };

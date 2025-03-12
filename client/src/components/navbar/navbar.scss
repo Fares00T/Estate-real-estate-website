@@ -49,7 +49,7 @@ nav {
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      background-color: #fcf5f3;
+      //background-color: #fcf5f3;
       height: 100%;
   
       @include md {
@@ -82,7 +82,7 @@ nav {
   
         .profile{
           padding: 12px 24px;
-          background-color: #fece51;
+          //background-color: #fece51;
           cursor: pointer;
           border: none;
           position: relative;
@@ -104,9 +104,9 @@ nav {
         }
       }
   
-      .register {
-        background-color: #fece51;
-      }
+      //.register {
+        //background-color: #fece51;
+      //}
   
       .menuIcon {
         display: none;
