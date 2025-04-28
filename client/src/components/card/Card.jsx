@@ -14,6 +14,8 @@ function Card({ item, onDelete }) {
         <p className="address">
           <img src="/pin.png" alt="" />
           <span>{item.address}</span>
+          <span>{item.city}</span>
+          <span>{item.district}</span>
         </p>
         <p className="price">$ {item.price}</p>
         <div className="bottom">

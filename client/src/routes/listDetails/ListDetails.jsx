@@ -52,11 +52,13 @@ export default function ListDetails() {
                 <div className="address">
                   <img src="/pin.png" alt="" />
                   <span>{post.address}</span>
+                  <span>{post.city}</span>
+                  <span>{post.district}</span>
                 </div>
                 <div className="price">$ {post.price}</div>
               </div>
               <div className="user">
-                <img src={post.user.avatar} alt="" />
+                <img src={post.user.avatar || "noavatar.jpg"} alt="" />
                 <span>{post.user.username}</span>
               </div>
             </div>

@@ -27,20 +27,23 @@ export const getUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   const id = req.params.id;
   const tokenUserId = req.userId;
-  const { password, avatar, ...inputs } = req.body;
 
-  if (id !== tokenUserId) {
+  console.log("Requesting User ID:", id);
+  console.log("Authenticated User ID:", tokenUserId);
+
+  if (id !== String(tokenUserId)) {
+    // Ensure both are strings
     return res.status(403).json({ message: "Not Authorized!" });
   }
 
-  let updatedPassword = null;
   try {
-    if (password) {
-      updatedPassword = await bcrypt.hash(password, 10);
-    }
+    const { password, avatar, ...inputs } = req.body;
+    let updatedPassword = password
+      ? await bcrypt.hash(password, 10)
+      : undefined;
 
     const updatedUser = await prisma.user.update({
-      where: { id },
+      where: { id: Number(id) }, // Ensure ID is a number
       data: {
         ...inputs,
         ...(updatedPassword && { password: updatedPassword }),
@@ -48,12 +51,11 @@ export const updateUser = async (req, res) => {
       },
     });
 
-    const { password: userPassword, ...rest } = updatedUser;
-
+    const { password: _, ...rest } = updatedUser;
     res.status(200).json(rest);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Failed to update users!" });
+    console.error(err);
+    res.status(500).json({ message: "Failed to update user!" });
   }
 };
 

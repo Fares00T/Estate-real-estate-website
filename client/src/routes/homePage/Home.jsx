@@ -2,9 +2,11 @@ import { useContext } from "react";
 import SearchBar from "../../components/searchBar/SearchBar";
 import "./home.scss";
 import { AuthContext } from "../../context/AuthContext";
-
+import axios from "axios";
 const Home = () => {
   const { currentUser } = useContext(AuthContext);
+
+  console.log("Backend URL:", import.meta.env.VITE_BACK_END_URL);
   console.log(currentUser);
   return (
     <div className="homepage">

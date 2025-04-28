@@ -19,12 +19,19 @@ function ProfileUpdatePage() {
     const { username, email, password } = Object.fromEntries(formData);
 
     try {
-      const res = await apiRequest.put(`/users/${currentUser.id}`, {
-        username,
-        email,
-        password,
-        avatar: avatar[0],
-      });
+      const res = await apiRequest.put(
+        `/users/${currentUser.id}`,
+        {
+          username,
+          email,
+          password,
+          avatar: avatar[0],
+        },
+        {
+          withCredentials: true, // Ensures the token is included in the request
+        }
+      );
+
       updateUser(res.data);
       navigate("/profile");
     } catch (err) {

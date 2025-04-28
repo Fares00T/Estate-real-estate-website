@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./newPostPage.scss";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -10,8 +10,29 @@ function NewPostPage() {
   const [value, setValue] = useState("");
   const [images, setImages] = useState([]);
   const [error, setError] = useState("");
+  const [cities, setCities] = useState([]);
+  const [selectedCity, setSelectedCity] = useState("");
+  const [districts, setDistricts] = useState([]);
 
   const navigate = useNavigate();
+
+  // Load cities from JSON
+  useEffect(() => {
+    fetch("wilaya.json") // Make sure cities.json is in the public folder
+      .then((response) => response.json())
+      .then((data) => setCities(data))
+      .catch((err) => console.error("Error loading cities:", err));
+  }, []);
+
+  // Update districts when city changes
+  useEffect(() => {
+    if (selectedCity) {
+      const cityData = cities.find((city) => city.name === selectedCity);
+      setDistricts(cityData ? cityData.dairats : []);
+    } else {
+      setDistricts([]);
+    }
+  }, [selectedCity, cities]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,7 +45,8 @@ function NewPostPage() {
           title: inputs.title,
           price: parseInt(inputs.price),
           address: inputs.address,
-          city: inputs.city,
+          city: selectedCity,
+          district: inputs.district,
           bedroom: parseInt(inputs.bedroom),
           bathroom: parseInt(inputs.bathroom),
           type: inputs.type,
@@ -47,7 +69,7 @@ function NewPostPage() {
       navigate("/" + res.data.id);
     } catch (err) {
       console.log(err);
-      setError(error);
+      setError("Error submitting the post.");
     }
   };
 
@@ -59,53 +81,93 @@ function NewPostPage() {
           <form onSubmit={handleSubmit}>
             <div className="item">
               <label htmlFor="title">Title</label>
-              <input id="title" name="title" type="text" />
+              <input id="title" name="title" type="text" required />
             </div>
             <div className="item">
               <label htmlFor="price">Price</label>
-              <input id="price" name="price" type="number" />
+              <input id="price" name="price" type="number" required />
             </div>
             <div className="item">
               <label htmlFor="address">Address</label>
-              <input id="address" name="address" type="text" />
+              <input id="address" name="address" type="text" required />
             </div>
             <div className="item description">
-              <label htmlFor="desc">
-                Description and contact informations{" "}
-              </label>
+              <label htmlFor="desc">Description and Contact Information</label>
               <ReactQuill theme="snow" onChange={setValue} value={value} />
             </div>
+
+            {/* City Selection */}
             <div className="item">
               <label htmlFor="city">City</label>
-              <input id="city" name="city" type="text" />
+              <select
+                id="city"
+                name="city"
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value)}
+                required
+              >
+                <option value="">Select City</option>
+                {cities.map((city) => (
+                  <option key={city.mattricule} value={city.name}>
+                    {city.name}
+                  </option>
+                ))}
+              </select>
             </div>
+
+            {/* District Selection */}
+            <div className="item">
+              <label htmlFor="district">District</label>
+              <select id="district" name="district" required>
+                <option value="">Select District</option>
+                {districts.map((district) => (
+                  <option key={district.code} value={district.name}>
+                    {district.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="item">
               <label htmlFor="bedroom">Bedroom Number</label>
-              <input min={1} id="bedroom" name="bedroom" type="number" />
+              <input
+                min={1}
+                id="bedroom"
+                name="bedroom"
+                type="number"
+                required
+              />
             </div>
             <div className="item">
               <label htmlFor="bathroom">Bathroom Number</label>
-              <input min={1} id="bathroom" name="bathroom" type="number" />
+              <input
+                min={1}
+                id="bathroom"
+                name="bathroom"
+                type="number"
+                required
+              />
             </div>
+
             <div className="item">
               <label htmlFor="latitude">Latitude</label>
-              <input id="latitude" name="latitude" type="text" />
+              <input id="latitude" name="latitude" type="text" required />
             </div>
             <div className="item">
               <label htmlFor="longitude">Longitude</label>
-              <input id="longitude" name="longitude" type="text" />
+              <input id="longitude" name="longitude" type="text" required />
             </div>
+
             <div className="item">
               <label htmlFor="type">Type</label>
               <select name="type">
-                <option value="rent" defaultChecked>
-                  Rent
-                </option>
+                <option value="rent">Rent</option>
                 <option value="buy">Buy</option>
               </select>
             </div>
+
             <div className="item">
-              <label htmlFor="type">Property</label>
+              <label htmlFor="property">Property Type</label>
               <select name="property">
                 <option value="apartment">Apartment</option>
                 <option value="house">House</option>
@@ -115,50 +177,48 @@ function NewPostPage() {
             </div>
 
             <div className="item">
-              <label htmlFor="utilities">Utilities Policy</label>
-              <select name="utilities">
-                <option value="owner">Owner is responsible</option>
-                <option value="tenant">Tenant is responsible</option>
-                <option value="shared">Shared</option>
+              <label htmlFor="utilities">Utilities Included</label>
+              <select name="utilities" id="utilities">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
               </select>
             </div>
+
             <div className="item">
-              <label htmlFor="pet">Pet Policy</label>
-              <select name="pet">
-                <option value="allowed">Allowed</option>
-                <option value="not-allowed">Not Allowed</option>
+              <label htmlFor="pet">Pets Allowed</label>
+              <select name="pet" id="pet">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
               </select>
             </div>
+
             <div className="item">
-              <label htmlFor="income">Income Policy</label>
-              <input
-                id="income"
-                name="income"
-                type="text"
-                placeholder="Income Policy"
-              />
+              <label htmlFor="size">Size (m)</label>
+              <input id="size" name="size" type="number" required />
             </div>
+
             <div className="item">
-              <label htmlFor="size">Total Size (sqft)</label>
-              <input min={0} id="size" name="size" type="number" />
+              <label htmlFor="school">Nearby Schools</label>
+              <input id="school" name="school" type="number" required />
             </div>
+
             <div className="item">
-              <label htmlFor="school">School</label>
-              <input min={0} id="school" name="school" type="number" />
+              <label htmlFor="bus">Nearby Bus Stops</label>
+              <input id="bus" name="bus" type="number" required />
             </div>
+
             <div className="item">
-              <label htmlFor="bus">bus</label>
-              <input min={0} id="bus" name="bus" type="number" />
+              <label htmlFor="restaurant">Nearby Restaurants</label>
+              <input id="restaurant" name="restaurant" type="number" required />
             </div>
-            <div className="item">
-              <label htmlFor="restaurant">Restaurant</label>
-              <input min={0} id="restaurant" name="restaurant" type="number" />
-            </div>
+
             <button className="sendButton">Add</button>
-            {error && <span>error</span>}
+            {error && <span>{error}</span>}
           </form>
         </div>
       </div>
+
+      {/* Image Upload */}
       <div className="sideContainer">
         {images.map((image, index) => (
           <img src={image} key={index} alt="" />
