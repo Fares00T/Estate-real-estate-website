@@ -27,7 +27,7 @@ export const addMessage = async (req, res) => {
       },
     });
 
-    // Optionally, update the chat's last message (without updating seenBy)
+    // Optionally, update the chat's last message
     await prisma.chat.update({
       where: {
         id: chatId,

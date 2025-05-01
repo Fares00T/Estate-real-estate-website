@@ -4,42 +4,49 @@ export const getChats = async (req, res) => {
   const tokenUserId = req.userId;
 
   try {
-    // Find chats involving the current user by using the ChatUser join table
     const chats = await prisma.chat.findMany({
       where: {
         users: {
-          some: {
-            userId: tokenUserId, // check if the user is involved in the chat
+          some: { userId: tokenUserId },
+        },
+      },
+      include: {
+        users: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                username: true,
+                avatar: true,
+              },
+            },
           },
+        },
+        messages: {
+          orderBy: { createdAt: "desc" },
+          take: 1,
         },
       },
     });
 
-    // Fetch the receiver's information (the other user in the chat)
-    for (const chat of chats) {
-      const receiver = await prisma.chatUser.findFirst({
-        where: {
-          chatId: chat.id,
-          userId: {
-            not: tokenUserId, // exclude the current user
-          },
-        },
-        include: {
-          user: {
-            select: {
-              id: true,
-              username: true,
-              avatar: true,
-            },
-          },
-        },
-      });
-      chat.receiver = receiver.user;
-    }
+    const formattedChats = chats.map((chat) => {
+      // Get the user who is NOT the current user (i.e., the receiver)
+      const receiverUser = chat.users.find(
+        (u) => u.user.id !== tokenUserId
+      )?.user;
 
-    res.status(200).json(chats);
+      return {
+        id: chat.id,
+        createdAt: chat.createdAt,
+        receiver: receiverUser,
+        sender: chat.users.find((u) => u.user.id === tokenUserId)?.user,
+        lastMessage: chat.messages[0]?.text || null,
+      };
+    });
+
+    res.status(200).json(formattedChats);
   } catch (err) {
-    console.log(err);
+    console.error("Error in getChats:", err);
     res.status(500).json({ message: "Failed to get chats!" });
   }
 };
@@ -94,25 +101,45 @@ export const addChat = async (req, res) => {
   const tokenUserId = req.userId;
 
   try {
-    // Create a new chat and add users via the ChatUser join table
-    const newChat = await prisma.chat.create({
-      data: {
+    const existingChat = await prisma.chat.findFirst({
+      where: {
         users: {
-          create: [
-            { userId: tokenUserId }, // Add current user
-            { userId: req.body.receiverId }, // Add the receiver
-          ],
+          some: { userId: tokenUserId },
+        },
+        AND: {
+          users: {
+            some: { userId: req.body.receiverId },
+          },
         },
       },
     });
 
+    if (existingChat) {
+      return res.status(200).json(existingChat);
+    }
+
+    const newChat = await prisma.chat.create({
+      data: {
+        users: {
+          create: [{ userId: tokenUserId }, { userId: req.body.receiverId }],
+        },
+      },
+      include: {
+        users: {
+          include: {
+            user: true, // Include full user data
+          },
+        },
+      },
+    });
+    console.log("New chat created:", newChat);
     res.status(200).json(newChat);
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "Failed to add chat!" });
+    res.status(500).json({ message: "Failed to create chat" });
   }
 };
-
+/*
 export const readChat = async (req, res) => {
   const tokenUserId = req.userId;
 
@@ -121,11 +148,7 @@ export const readChat = async (req, res) => {
       where: {
         id: req.params.id,
       },
-      data: {
-        seenBy: {
-          set: [tokenUserId],
-        },
-      },
+      data: {},
     });
     res.status(200).json(chat);
   } catch (err) {
@@ -133,3 +156,4 @@ export const readChat = async (req, res) => {
     res.status(500).json({ message: "Failed to read chat!" });
   }
 };
+*/

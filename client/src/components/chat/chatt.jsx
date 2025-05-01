@@ -5,7 +5,7 @@ import apiRequest from "../lib/apiRequest";
 import { format } from "timeago.js";
 import { SocketContext } from "../../context/SocketContext";
 
-function Chat({ chats, receiverId, onClose }) {
+function Chatt({ chats, receiverId, onClose }) {
   const [chat, setChat] = useState(null);
   const { currentUser } = useContext(AuthContext);
   const { socket } = useContext(SocketContext);
@@ -110,35 +110,9 @@ function Chat({ chats, receiverId, onClose }) {
     };
   }, [socket, chat]);
   console.log("receiverId in Chat:", receiverId);
-  console.log("Chats prop:", chats);
+
   return (
-    <div className="chat">
-      <div className="messages">
-        <h1>Messages</h1>
-        {[...chats]
-
-          .sort((a, b) => {
-            const aTime = new Date(
-              a.messages?.[a.messages.length - 1]?.createdAt || 0
-            );
-            const bTime = new Date(
-              b.messages?.[b.messages.length - 1]?.createdAt || 0
-            );
-            return bTime - aTime;
-          })
-          .map((c) => (
-            <div
-              className="message"
-              key={c.id}
-              onClick={() => handleOpenChat(c.id)}
-            >
-              <img src={c.receiver?.avatar || "/noavatar.jpg"} alt="avatar" />
-              <span>{c.receiver?.username || "Unknown User"}</span>
-              <p>{c.lastMessage || "No message yet"}</p>
-            </div>
-          ))}
-      </div>
-
+    <div>
       {chat && (
         <div className="chatBox">
           <div className="top">
@@ -182,4 +156,4 @@ function Chat({ chats, receiverId, onClose }) {
   );
 }
 
-export default Chat;
+export default Chatt;

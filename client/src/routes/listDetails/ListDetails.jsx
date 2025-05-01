@@ -6,6 +6,7 @@ import apiRequest from "../../components/lib/apiRequest";
 import { useNavigate, useLoaderData } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { AuthContext } from "../../context/AuthContext";
+import Chat from "../../components/chat/Chat.jsx";
 
 export default function ListDetails() {
   const post = useLoaderData();
@@ -13,6 +14,8 @@ export default function ListDetails() {
   const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatData, setChatData] = useState(null);
 
   const handleDelete = async () => {
     try {
@@ -37,6 +40,37 @@ export default function ListDetails() {
     } catch (err) {
       console.log(err);
       setSaved((prev) => !prev);
+    }
+  };
+
+  const handleMessage = async () => {
+    if (!currentUser) return navigate("/login");
+
+    try {
+      const res = await apiRequest.get("/chats");
+      const existingChat = res.data.find(
+        (chat) =>
+          Array.isArray(chat.users) &&
+          chat.users.some((user) => user.userId === post.user.id)
+      );
+
+      console.log("Existing chat foundd:", existingChat);
+
+      if (existingChat) {
+        setChatData(existingChat);
+      } else {
+        const newChatRes = await apiRequest.post("/chats", {
+          receiverId: post.userId,
+        });
+        console.log("New chat created:", newChatRes.data);
+
+        setChatData(newChatRes.data);
+      }
+
+      setChatOpen(true); // Open the chat
+    } catch (err) {
+      console.log(err);
+      alert("Failed to open chat");
     }
   };
 
@@ -125,10 +159,11 @@ export default function ListDetails() {
             <Map items={[post]} />
           </div>
           <div className="buttons">
-            <button>
+            <button onClick={handleMessage}>
               <img src="/chat.png" alt="" />
               Send a Message
             </button>
+
             {currentUser?.role === "admin" && (
               <button
                 onClick={() => setShowModal(true)}
@@ -145,6 +180,12 @@ export default function ListDetails() {
               {saved ? "Place Saved" : "Save the Place"}
             </button>
           </div>
+          {chatOpen && chatData && (
+            <Chat
+              chats={[{ ...chatData, receiver: post.user }]} // pass receiver correctly
+              onClose={() => setChatOpen(false)}
+            />
+          )}
         </div>
       </div>
 
