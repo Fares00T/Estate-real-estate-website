@@ -4,7 +4,8 @@ import { listData } from "../../components/lib/dummydata";
 import Map from "../../components/map/Map";
 import "./listpage.scss";
 import { Await, useLoaderData } from "react-router-dom";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
+import axios from "axios";
 
 function ListPage() {
   const data = useLoaderData();
@@ -20,9 +21,12 @@ function ListPage() {
               errorElement={<p>Error loading posts!</p>}
             >
               {(postResponse) =>
-                postResponse.data.map((post) => (
-                  <Card key={post.id} item={post} />
-                ))
+                postResponse.data.map(
+                  (post) => (
+                    console.log("Post:", post),
+                    (<Card key={post.id} item={post} />)
+                  )
+                )
               }
             </Await>
           </Suspense>

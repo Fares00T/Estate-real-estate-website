@@ -111,32 +111,38 @@ function Chat({ chats, receiverId, onClose }) {
   }, [socket, chat]);
   console.log("receiverId in Chat:", receiverId);
   console.log("Chats prop:", chats);
+
+  // Sort chats here, outside JSX
+  const sortedChats = [...chats].sort((a, b) => {
+    const aTime = a.messages?.length
+      ? new Date(a.messages[a.messages.length - 1]?.createdAt)
+      : 0;
+    const bTime = b.messages?.length
+      ? new Date(b.messages[b.messages.length - 1]?.createdAt)
+      : 0;
+    return bTime - aTime;
+  });
+
   return (
     <div className="chat">
       <div className="messages">
         <h1>Messages</h1>
-        {[...chats]
+        {chats.map((c) => {
+          const isDeleted = !c.receiver;
 
-          .sort((a, b) => {
-            const aTime = new Date(
-              a.messages?.[a.messages.length - 1]?.createdAt || 0
-            );
-            const bTime = new Date(
-              b.messages?.[b.messages.length - 1]?.createdAt || 0
-            );
-            return bTime - aTime;
-          })
-          .map((c) => (
+          return (
             <div
-              className="message"
+              className={`message ${isDeleted ? "disabled" : ""}`}
               key={c.id}
-              onClick={() => handleOpenChat(c.id)}
+              onClick={!isDeleted ? () => handleOpenChat(c.id) : undefined}
+              style={{ cursor: isDeleted ? "default" : "pointer" }}
             >
               <img src={c.receiver?.avatar || "/noavatar.jpg"} alt="avatar" />
-              <span>{c.receiver?.username || "Unknown User"}</span>
+              <span>{c.receiver?.username || "deleted user"}</span>
               <p>{c.lastMessage || "No message yet"}</p>
             </div>
-          ))}
+          );
+        })}
       </div>
 
       {chat && (

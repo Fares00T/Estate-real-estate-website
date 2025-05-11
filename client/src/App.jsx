@@ -14,6 +14,9 @@ import {
   singlePageLoader,
 } from "./components/lib/loaders";
 import AdminPage from "./routes/Admin/Admin";
+import EditPost from "./routes/postUpdate/EditPost";
+import AgencyApplicationForm from "./routes/agencyForm/agencyForm";
+import AgenciesPage from "./routes/agenciesPage/agencies";
 
 function App() {
   const router = createBrowserRouter([
@@ -21,6 +24,10 @@ function App() {
       path: "/",
       element: <Layout />,
       children: [
+        {
+          path: "/agencies",
+          element: <AgenciesPage />,
+        },
         {
           path: "/",
           element: <Home />,
@@ -56,12 +63,20 @@ function App() {
           loader: profilePageLoader,
         },
         {
+          path: "/agency",
+          element: <AgencyApplicationForm />,
+        },
+        {
           path: "/profile/update",
           element: <ProfileUpdatePage />,
         },
         {
           path: "/add",
           element: <NewPostPage />,
+        },
+        {
+          path: "/edit-post/:id",
+          element: <EditPost />,
         },
       ],
     },

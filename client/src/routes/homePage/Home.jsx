@@ -2,7 +2,7 @@ import { useContext } from "react";
 import SearchBar from "../../components/searchBar/SearchBar";
 import "./home.scss";
 import { AuthContext } from "../../context/AuthContext";
-import axios from "axios";
+
 const Home = () => {
   const { currentUser } = useContext(AuthContext);
 
@@ -13,7 +13,7 @@ const Home = () => {
       <div className="textcont">
         <div className="heroText">
           <h1 className="title">Find the Home and get your dream place</h1>
-          <p>
+          <p className="px-4 py-2 text-lg text-gray-600">
             Discover your dream home with ease. Explore our wide range of
             properties available for rent or sale, tailored to fit your needs.
             Start your journey to a new place you'll love today!
@@ -35,7 +35,8 @@ const Home = () => {
           </div>
         </div>
       </div>
-      {/* <div className="imgcont">
+      {/*
+      <div className="imgcont">
         <img src="/src/routes/homePage/bg.png"></img>
       </div>
       */}

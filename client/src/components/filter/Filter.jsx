@@ -12,6 +12,7 @@ function Filter() {
     district: searchParams.get("district") || "",
     type: searchParams.get("type") || "",
     property: searchParams.get("property") || "",
+    propertyType: searchParams.get("propertyType") || "",
     minPrice: searchParams.get("minPrice") || "",
     maxPrice: searchParams.get("maxPrice") || "",
     bedroom: searchParams.get("bedroom") || "",
@@ -118,21 +119,53 @@ function Filter() {
         </div>
 
         <div className="item">
-          <label htmlFor="property">Property</label>
+          <label htmlFor="property">Property Category</label>
           <select
             name="property"
             id="property"
-            onChange={handleChange}
+            onChange={(e) =>
+              setQuery((prev) => ({
+                ...prev,
+                property: e.target.value,
+                propertyType: "", // reset type
+              }))
+            }
             value={query.property}
           >
-            <option value="">Any</option>
-            <option value="apartment">Apartment</option>
-            <option value="house">House</option>
-            <option value="condo">Condo</option>
-            <option value="land">Land</option>
+            <option value="">Select Category</option>
+            <option value="residential">Residential</option>
+            <option value="commercial">Commercial</option>
           </select>
         </div>
 
+        <div className="item">
+          <label htmlFor="propertyType">Property Type</label>
+          <select
+            name="propertyType"
+            id="propertyType"
+            onChange={handleChange}
+            value={query.propertyType}
+            disabled={!query.property}
+          >
+            <option value="">Select Type</option>
+            {query.property === "residential" && (
+              <>
+                <option value="apartment">Apartment</option>
+                <option value="individual_house">Individual House</option>
+                <option value="traditional_house">Traditional House</option>
+                <option value="other_residential">Other</option>
+              </>
+            )}
+            {query.property === "commercial" && (
+              <>
+                <option value="office">Office</option>
+                <option value="retail">Retail</option>
+                <option value="hospitality">Hospitality/Leisure</option>
+                <option value="industrial">Industrial</option>
+              </>
+            )}
+          </select>
+        </div>
         <div className="item">
           <label htmlFor="minPrice">Min Price</label>
           <input

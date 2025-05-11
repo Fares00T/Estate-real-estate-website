@@ -1,22 +1,29 @@
 import { useState, useEffect } from "react";
-import "./searchBar.scss";
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import { Link } from "react-router-dom";
 
 const types = ["buy", "rent"];
 
 function SearchBar() {
-  const [cities, setCities] = useState([]); // Store city data
-  const [districts, setDistricts] = useState([]); // Store districts of the selected city
+  const [cities, setCities] = useState([]);
+  const [districts, setDistricts] = useState([]);
 
   const [query, setQuery] = useState({
     type: "buy",
     city: "",
     district: "",
-    minPrice: 0,
-    maxPrice: 0,
+    minPrice: "",
+    maxPrice: "",
   });
 
-  // Fetch city data from JSON file
   useEffect(() => {
     fetch("/wilaya.json")
       .then((res) => res.json())
@@ -24,85 +31,121 @@ function SearchBar() {
       .catch((err) => console.error("Error loading cities:", err));
   }, []);
 
-  // Update districts when city changes
   useEffect(() => {
     const selectedCity = cities.find((c) => c.name === query.city);
     setDistricts(selectedCity ? selectedCity.dairats : []);
-    setQuery((prev) => ({ ...prev, district: "" })); // Reset district when city changes
+    setQuery((prev) => ({ ...prev, district: "" }));
   }, [query.city, cities]);
-
-  const switchType = (val) => {
-    setQuery((prev) => ({ ...prev, type: val }));
-  };
 
   const handleChange = (e) => {
     setQuery((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const switchType = (val) => {
+    setQuery((prev) => ({ ...prev, type: val }));
+  };
+
   return (
-    <div className="searchBar">
-      <div className="type">
+    <Box sx={{ p: 2, border: "1px solid #ccc", borderRadius: 2 }}>
+      <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
         {types.map((type) => (
-          <button
+          <Button
             key={type}
+            variant={query.type === type ? "contained" : "outlined"}
             onClick={() => switchType(type)}
-            className={query.type === type ? "active" : ""}
           >
             {type}
-          </button>
+          </Button>
         ))}
-      </div>
-      <form>
-        {/* City Dropdown */}
-        <select name="city" onChange={handleChange} value={query.city}>
-          <option value="">Select City</option>
-          {cities.map((city) => (
-            <option key={city.mattricule} value={city.name}>
-              {city.name}
-            </option>
-          ))}
-        </select>
+      </Box>
 
-        {/* District Dropdown */}
-        <select
-          name="district"
-          onChange={handleChange}
-          value={query.district}
-          disabled={!query.city} // Disable if no city is selected
-        >
-          <option value="">Select District</option>
-          {districts.map((district) => (
-            <option key={district.code} value={district.name}>
-              {district.name}
-            </option>
-          ))}
-        </select>
+      <Box
+        component="form"
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "row", sm: "column", md: "row" }, // Stack on small screens, row on larger
+          gap: 1,
+          flexWrap: "wrap",
+          justifyContent: "space-between", // Ensures the fields are spaced out properly
+        }}
+        sm={{ flexDirection: "column" }} // Column layout on small screens
+        md={{ flexDirection: "column" }} // Row layout on medium and larger screens
+      >
+        {/* City */}
+        <FormControl fullWidth sx={{ flex: 1 }}>
+          <InputLabel>City</InputLabel>
+          <Select
+            name="city"
+            value={query.city}
+            onChange={handleChange}
+            label="City"
+          >
+            <MenuItem value="">Select City</MenuItem>
+            {cities.map((city) => (
+              <MenuItem key={city.mattricule} value={city.name}>
+                {city.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-        <input
+        {/* District */}
+        <FormControl fullWidth sx={{ flex: 1 }} disabled={!query.city}>
+          <InputLabel>District</InputLabel>
+          <Select
+            name="district"
+            value={query.district}
+            onChange={handleChange}
+            label="District"
+          >
+            <MenuItem value="">Select District</MenuItem>
+            {districts.map((district) => (
+              <MenuItem key={district.code} value={district.name}>
+                {district.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {/* Min Price */}
+        <TextField
           type="number"
           name="minPrice"
-          min={0}
-          max={10000000}
-          placeholder="Min Price"
+          label="Min Price"
+          value={query.minPrice}
           onChange={handleChange}
+          inputProps={{ min: 0 }}
+          fullWidth
+          sx={{ flex: 1 }}
         />
-        <input
+
+        {/* Max Price */}
+        <TextField
           type="number"
           name="maxPrice"
-          min={0}
-          max={10000000}
-          placeholder="Max Price"
+          label="Max Price"
+          value={query.maxPrice}
           onChange={handleChange}
+          inputProps={{ min: 0 }}
+          fullWidth
+          sx={{ flex: 1 }}
         />
+
+        {/* Search Button */}
         <Link
           to={`/list?type=${query.type}&city=${query.city}&district=${query.district}&minPrice=${query.minPrice}&maxPrice=${query.maxPrice}`}
+          style={{ textDecoration: "none" }}
         >
-          <button>
-            <img src="/search.png" alt="Search" />
-          </button>
+          <Button
+            variant="contained"
+            color="warning"
+            sx={{ height: "100%", width: "100%" }}
+          >
+            Search
+          </Button>
         </Link>
-      </form>
-    </div>
+      </Box>
+    </Box>
   );
 }
 

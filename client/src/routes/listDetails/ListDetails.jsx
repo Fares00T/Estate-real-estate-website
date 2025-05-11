@@ -1,9 +1,9 @@
 import "./listDetails.scss";
 import Slider from "../../components/slider/Slider.jsx";
 import Map from "../../components/map/Map";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import apiRequest from "../../components/lib/apiRequest";
-import { useNavigate, useLoaderData } from "react-router-dom";
+import { useNavigate, useLoaderData, useParams } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { AuthContext } from "../../context/AuthContext";
 import Chat from "../../components/chat/Chat.jsx";
@@ -16,14 +16,34 @@ export default function ListDetails() {
   const [showModal, setShowModal] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [chatData, setChatData] = useState(null);
+  const [postId, setPostId] = useState(null);
+  console.log("Post ID:", postId); // Add this to check if postId is valid
+  {
+    /*console.log("Post data:", post);
+  useEffect(() => {
+    const incrementViews = async () => {
+      try {
+        await apiRequest.post(`/posts/view/${post.id}`); // Adjust if route differs
+      } catch (err) {
+        console.error("Failed to increment views:", err);
+      }
+    };
+
+    if (post?.id) {
+      incrementViews();
+    }
+  }, [post?.id]);
+  */
+  }
+  // Make sure setPostId is being called with a valid ID before the fetch call.
 
   const handleDelete = async () => {
     try {
       const response = await apiRequest.delete(`/posts/${post.id}`);
-
+      /*
       if (response.status === 200) {
         navigate("/admin"); // Redirect after deletion
-      }
+      }*/
     } catch (err) {
       console.log(err);
       alert("Failed to delete post.");
@@ -80,6 +100,14 @@ export default function ListDetails() {
         <div className="wrapper">
           <Slider images={post.images} />
           <div className="info">
+            {currentUser?.id === post.userId && (
+              <button
+                onClick={() => navigate(`/edit-post/${post.id}`)}
+                style={{ backgroundColor: "#007bff", color: "white" }}
+              >
+                Edit Post
+              </button>
+            )}
             <div className="top">
               <div className="post">
                 <h1>{post.title}</h1>
@@ -89,11 +117,17 @@ export default function ListDetails() {
                   <span>{post.city}</span>
                   <span>{post.district}</span>
                 </div>
-                <div className="price">$ {post.price}</div>
+                <div className="price">DZD {post.price}</div>
+                <div className="views">
+                  {/*{typeof post.views === "number" ? post.views : "Loading..."}*/}
+                </div>
               </div>
               <div className="user">
                 <img src={post.user.avatar || "noavatar.jpg"} alt="" />
                 <span>{post.user.username}</span>
+                {post.user.role === "agency" && (
+                  <span className="agencyBadge">Trusted Agency</span>
+                )}
               </div>
             </div>
             <div
@@ -159,10 +193,12 @@ export default function ListDetails() {
             <Map items={[post]} />
           </div>
           <div className="buttons">
-            <button onClick={handleMessage}>
-              <img src="/chat.png" alt="" />
-              Send a Message
-            </button>
+            {currentUser?.id !== post.userId && (
+              <button onClick={handleMessage}>
+                <img src="/chat.png" alt="" />
+                Send a Message
+              </button>
+            )}
 
             {currentUser?.role === "admin" && (
               <button

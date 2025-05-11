@@ -18,6 +18,13 @@ model User {
   posts      Post[]      // Relation to Post model
   savedPosts SavedPost[] // Relation to SavedPost model
   chats      ChatUser[]  // Join table for many-to-many relation with Chat
+
+  // 👇 Add these agency-specific fields
+  agencyName String?
+  phone      String?
+  location   String?
+  website    String?
+  about      String?
 }
 
 enum Role {
@@ -40,11 +47,13 @@ model Post {
   longitude  String
   type       Type
   property   Property
+  propertyType PropertyType
   createdAt  DateTime    @default(now())
   user       User        @relation(fields: [userId], references: [id])
   userId     Int
   postDetail PostDetail?
   savedPosts SavedPost[] // Relation to SavedPost model
+  views      Int         @default(0) // 👈 Add this line
 }
 
 enum Type {
@@ -53,11 +62,24 @@ enum Type {
 }
 
 enum Property {
-  apartment
-  house
-  condo
-  land
+  commercial
+  residential
 }
+
+enum PropertyType {
+  // Commercial Types
+  office
+  retail
+  hospitality
+  industrial
+
+  // Residential Types
+  apartment
+  individual_house
+  traditional_house
+  other_residential
+}
+
 
 model PostDetail {
   id         Int     @id @default(autoincrement())
@@ -71,6 +93,7 @@ model PostDetail {
   restaurant Int?
   post       Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId     Int     @unique
+  views      Int         @default(0) // 👈 Add this line
 }
 
 model SavedPost {
@@ -94,19 +117,20 @@ model Chat {
 }
 
 model ChatUser {
-  chatId     Int
-  userId     Int
-  chat       Chat      @relation(fields: [chatId], references: [id])
-  user       User      @relation(fields: [userId], references: [id])
+  chatId Int
+  userId Int
+  chat   Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([chatId, userId])  // Composite primary key
+  @@id([chatId, userId])
 }
+
 
 model Message {
   id        Int     @id @default(autoincrement())
   text      String
   userId    Int
-  chat      Chat    @relation(fields: [chatId], references: [id])
   chatId    Int
+  chat      Chat    @relation(fields: [chatId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }

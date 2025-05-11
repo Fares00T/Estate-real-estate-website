@@ -40,14 +40,14 @@ export const login = async (req, res) => {
       where: { username },
     });
 
-    if (!user) return res.status(400).json({ message: "Invalid Credentials!" });
+    if (!user) return res.status(400).json({ message: "Invalid username" });
 
     // CHECK IF THE PASSWORD IS CORRECT
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid)
-      return res.status(400).json({ message: "Invalid Credentials!" });
+      return res.status(400).json({ message: "Invalid password!" });
 
     // GENERATE COOKIE TOKEN AND SEND TO THE USER
     //res.setHeader("Set-Cookie", "test=" + "myValue").json("success");
@@ -57,7 +57,7 @@ export const login = async (req, res) => {
     const token = jwt.sign(
       {
         id: user.id,
-        isAdmin: false,
+        role: user.role,
       },
       process.env.JWT_SECRET_KEY,
       { expiresIn: age }

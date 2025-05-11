@@ -5,6 +5,9 @@ import "react-quill/dist/quill.snow.css";
 import apiRequest from "../../components/lib/apiRequest.js";
 import UploadWidget from "../../components/UploadWidget/UploadWidget";
 import { useNavigate } from "react-router-dom";
+import Button from "@mui/material/Button";
+
+import { FormControl, FormHelperText, TextField } from "@mui/material";
 
 function NewPostPage() {
   const [value, setValue] = useState("");
@@ -13,6 +16,12 @@ function NewPostPage() {
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
   const [districts, setDistricts] = useState([]);
+  const [property, setProperty] = useState("");
+  const [form, setForm] = useState({
+    latitude: "",
+    longitude: "",
+    // add other fields as needed
+  });
 
   const navigate = useNavigate();
 
@@ -51,6 +60,7 @@ function NewPostPage() {
           bathroom: parseInt(inputs.bathroom),
           type: inputs.type,
           property: inputs.property,
+          propertyType: inputs.propertyType,
           latitude: inputs.latitude,
           longitude: inputs.longitude,
           images: images,
@@ -73,6 +83,31 @@ function NewPostPage() {
     }
   };
 
+  const handleChange = (e) => {
+    setForm((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleGetLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setForm({
+            ...form,
+            latitude: position.coords.latitude.toFixed(6),
+            longitude: position.coords.longitude.toFixed(6),
+          });
+        },
+        (error) => {
+          alert("Unable to retrieve your location. Please allow permission.");
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
+  };
   return (
     <div className="newPostPage">
       <div className="formContainer">
@@ -149,14 +184,34 @@ function NewPostPage() {
               />
             </div>
 
-            <div className="item">
-              <label htmlFor="latitude">Latitude</label>
-              <input id="latitude" name="latitude" type="text" required />
-            </div>
-            <div className="item">
-              <label htmlFor="longitude">Longitude</label>
-              <input id="longitude" name="longitude" type="text" required />
-            </div>
+            <FormControl fullWidth>
+              <TextField
+                label="Latitude"
+                name="latitude"
+                value={form.latitude}
+                onChange={handleChange}
+              />
+              <FormHelperText>
+                🗺 Tip: Open Google Maps, right-click anywhere, and choose
+                "What's here?"—you’ll see coordinates.
+              </FormHelperText>
+            </FormControl>
+
+            <FormControl fullWidth>
+              <TextField
+                label="Longitude"
+                name="longitude"
+                value={form.longitude}
+                onChange={handleChange}
+              />
+              <Button
+                variant="outlined"
+                onClick={handleGetLocation}
+                sx={{ mt: 2 }}
+              >
+                📍 Get Current Location
+              </Button>
+            </FormControl>
 
             <div className="item">
               <label htmlFor="type">Type</label>
@@ -167,12 +222,41 @@ function NewPostPage() {
             </div>
 
             <div className="item">
-              <label htmlFor="property">Property Type</label>
-              <select name="property">
-                <option value="apartment">Apartment</option>
-                <option value="house">House</option>
-                <option value="condo">Condo</option>
-                <option value="land">Land</option>
+              <label htmlFor="property">Property Category</label>
+              <select
+                name="property"
+                id="property"
+                required
+                onChange={(e) => {
+                  setProperty(e.target.value);
+                }}
+              >
+                <option value="">Select Category</option>
+                <option value="residential">Residential</option>
+                <option value="commercial">Commercial</option>
+              </select>
+            </div>
+
+            <div className="item">
+              <label htmlFor="propertyType">Property Type</label>
+              <select name="propertyType" id="propertyType" required>
+                <option value="">Select Type</option>
+                {property === "residential" && (
+                  <>
+                    <option value="apartment">Apartment</option>
+                    <option value="individual_house">Individual House</option>
+                    <option value="traditional_house">Traditional House</option>
+                    <option value="other_residential">Other</option>
+                  </>
+                )}
+                {property === "commercial" && (
+                  <>
+                    <option value="office">Office</option>
+                    <option value="retail">Retail</option>
+                    <option value="hospitality">Hospitality/Leisure</option>
+                    <option value="industrial">Industrial</option>
+                  </>
+                )}
               </select>
             </div>
 

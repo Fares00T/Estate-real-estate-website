@@ -25,29 +25,56 @@ export const getUser = async (req, res) => {
 };
 
 export const updateUser = async (req, res) => {
-  const id = req.params.id;
+  const id = Number(req.params.id);
   const tokenUserId = req.userId;
 
-  console.log("Requesting User ID:", id);
-  console.log("Authenticated User ID:", tokenUserId);
-
-  if (id !== String(tokenUserId)) {
-    // Ensure both are strings
-    return res.status(403).json({ message: "Not Authorized!" });
-  }
-
   try {
-    const { password, avatar, ...inputs } = req.body;
-    let updatedPassword = password
+    // Get the logged-in user's role
+    const requestingUser = await prisma.user.findUnique({
+      where: { id: tokenUserId },
+    });
+
+    if (!requestingUser) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const isAdmin = requestingUser.role === "admin";
+
+    // If not admin and not updating their own account, deny access
+    if (!isAdmin && id !== tokenUserId) {
+      return res.status(403).json({ message: "Not authorized!" });
+    }
+
+    const {
+      password,
+      avatar,
+      agencyName,
+      phone,
+      city,
+      district,
+      website,
+      about,
+      role, // include role
+      ...inputs
+    } = req.body;
+
+    const updatedPassword = password
       ? await bcrypt.hash(password, 10)
       : undefined;
 
     const updatedUser = await prisma.user.update({
-      where: { id: Number(id) }, // Ensure ID is a number
+      where: { id },
       data: {
         ...inputs,
         ...(updatedPassword && { password: updatedPassword }),
         ...(avatar && { avatar }),
+        ...(agencyName && { agencyName }),
+        ...(phone && { phone }),
+        ...(city && { city }),
+        ...(district && { district }),
+        ...(website && { website }),
+        ...(about && { about }),
+        ...(isAdmin && role && { role }), // only admins can update role
       },
     });
 
@@ -60,21 +87,73 @@ export const updateUser = async (req, res) => {
 };
 
 export const deleteUser = async (req, res) => {
-  const id = req.params.id;
-  const tokenUserId = req.userId;
-
-  if (id !== tokenUserId) {
-    return res.status(403).json({ message: "Not Authorized!" });
-  }
+  const id = parseInt(req.params.id);
 
   try {
+    // Step 1: Delete PostDetails linked to user's posts
+    await prisma.postDetail.deleteMany({
+      where: {
+        post: {
+          userId: id,
+        },
+      },
+    });
+
+    // Step 2: Delete SavedPosts where the user is involved
+    await prisma.savedPost.deleteMany({
+      where: {
+        OR: [{ userId: id }, { post: { userId: id } }],
+      },
+    });
+
+    // Step 3: Delete Posts created by the user
+    await prisma.post.deleteMany({
+      where: { userId: id },
+    });
+
+    // Step 4: Find all Chat IDs the user is involved in
+    const chatUsers = await prisma.chatUser.findMany({
+      where: { userId: id },
+      select: { chatId: true },
+    });
+    const chatIds = [...new Set(chatUsers.map((cu) => cu.chatId))];
+    /*
+    // ✅ Step 5: Delete all messages in those chats
+    await prisma.message.deleteMany({
+      where: {
+        chatId: { in: chatIds },
+      },
+    });
+*/
+    // ✅ Step 6: Delete the user's ChatUser links
+    await prisma.chatUser.deleteMany({
+      where: { userId: id },
+    });
+
+    // ✅ Step 7: Delete chats with no users left
+    for (const chatId of chatIds) {
+      const remainingUsers = await prisma.chatUser.count({
+        where: { chatId },
+      });
+
+      if (remainingUsers === 0) {
+        await prisma.chat.delete({
+          where: { id: chatId },
+        });
+      }
+    }
+
+    // ✅ Step 8: Delete the user
     await prisma.user.delete({
       where: { id },
     });
-    res.status(200).json({ message: "User deleted" });
+
+    res
+      .status(200)
+      .json({ message: "User and related data deleted successfully." });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Failed to delete users!" });
+    console.error(err);
+    res.status(500).json({ message: "Failed to delete user." });
   }
 };
 
@@ -158,5 +237,25 @@ export const getNotificationNumber = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Failed to get profile posts!" });
+  }
+};
+
+export const getAgency = async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        role: "agency",
+        agencyName: { not: "" },
+        location: { not: "" },
+        phone: { not: "" },
+        website: { not: "" },
+        about: { not: "" },
+        //avatar: { not: "" },
+      },
+    });
+    res.status(200).json(users);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Failed to get users!" });
   }
 };

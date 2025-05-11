@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import "./card.scss";
+import { useEffect, useState } from "react";
 
 function Card({ item, onDelete }) {
+  const isAgency = item.user?.role === "agency";
   return (
     <div className="card">
       <Link to={`/${item.id}`} className="imageContainer">
@@ -17,7 +19,7 @@ function Card({ item, onDelete }) {
           <span>{item.city}</span>
           <span>{item.district}</span>
         </p>
-        <p className="price">$ {item.price}</p>
+        <p className="price">DZD {item.price}</p>
         <div className="bottom">
           <div className="features">
             <div className="feature">
@@ -28,14 +30,11 @@ function Card({ item, onDelete }) {
               <img src="/bath.png" alt="" />
               <span>{item.bathroom} bathroom</span>
             </div>
-          </div>
-          <div className="icons">
-            <div className="icon">
-              <img src="/save.png" alt="" />
-            </div>
-            <div className="icon">
-              <img src="/chat.png" alt="" />
-            </div>
+            {isAgency && (
+              <div className="featureagency">
+                <span className="agencyLabel">Trusted Agency</span>
+              </div>
+            )}
           </div>
         </div>
 

@@ -1,6 +1,5 @@
 @use "../../responsive.scss" as *;
 
-
 .card {
   display: flex;
   gap: 20px;
@@ -76,6 +75,16 @@
           align-items: center;
           gap: 5px;
           background-color: whitesmoke;
+          padding: 5px;
+          border-radius: 5px;
+        }
+
+        .featureagency {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          background-color: green;
+          color: white;
           padding: 5px;
           border-radius: 5px;
         }

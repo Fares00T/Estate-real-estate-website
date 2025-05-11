@@ -1,55 +1,101 @@
+$primary-color: #007bff;
+$primary-hover: #0056b3;
+$error-color: red;
+$bg-light: #f7f7f7;
+$bg-white: #fff;
+$border-radius: 8px;
+$shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
 .profileUpdatePage {
-    height: 100%;
-    display: flex;
-  
-    .formContainer {
-      flex:3;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 20px;
+  gap: 20px;
+
+  .formContainer,
+  .sideContainer {
+    flex: 1 1 300px;
+    padding: 20px;
+    border-radius: $border-radius;
+    box-shadow: $shadow;
+  }
+
+  .formContainer {
+    background-color: $bg-white;
+
+    form {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      form {
+      flex-wrap: wrap;
+      gap: 20px;
+
+      .item {
+        flex: 1 1 45%;
         display: flex;
         flex-direction: column;
-        gap: 20px;
-  
-        .item {
-          display: flex;
-          flex-direction: column;
-          gap: 5px;
-  
-          label {
-          }
-  
-          input {
-            padding: 20px;
-            border-radius: 5px;
-            border: 1px solid gray;
-          }
+
+        label {
+          font-weight: 600;
+          margin-bottom: 5px;
         }
-        button {
-          padding: 20px;
-          border-radius: 5px;
-          border: none;
-          background-color: teal;
-          color: white;
-          font-weight: bold;
-          cursor: pointer;
+
+        input,
+        textarea,
+        select {
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          font-size: 16px;
+          width: 100%;
+        }
+
+        textarea {
+          resize: vertical;
+          min-height: 100px;
         }
       }
-    }
-  
-    .sideContainer {
-      flex: 2;
-      background-color: #fcf5f3;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      align-items: center;
-      justify-content: center;
-  
-      .avatar{
-        width: 50%;
-        object-fit: cover;
+
+      button {
+        padding: 12px 24px;
+        background-color: $primary-color;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:hover {
+          background-color: $primary-hover;
+        }
+
+        &:disabled {
+          background-color: #d6d6d6;
+          cursor: not-allowed;
+        }
+      }
+
+      .error {
+        width: 100%;
+        color: $error-color;
+        font-size: 14px;
       }
     }
   }
+
+  .sideContainer {
+    background-color: $bg-light;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+
+    .avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+  }
+}

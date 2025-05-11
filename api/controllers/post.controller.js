@@ -17,6 +17,13 @@ export const getPosts = async (req, res) => {
           lte: parseInt(query.maxPrice) || undefined,
         },
       },
+      include: {
+        user: {
+          select: {
+            role: true,
+          },
+        },
+      },
     });
 
     console.log(posts);
@@ -42,6 +49,7 @@ export const getPost = async (req, res) => {
           select: {
             username: true,
             avatar: true,
+            role: true,
           },
         },
       },
@@ -96,11 +104,48 @@ export const addPost = async (req, res) => {
 };
 
 export const updatePost = async (req, res) => {
+  const postId = parseInt(req.params.id, 10);
+  const userId = req.userId;
+  const { postData, postDetail } = req.body;
+
+  if (isNaN(postId)) {
+    return res.status(400).json({ message: "Invalid post ID" });
+  }
+
   try {
-    res.status(200).json();
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      include: { postDetail: true },
+    });
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found!" });
+    }
+
+    if (post.userId !== userId) {
+      return res.status(403).json({ message: "Not Authorized!" });
+    }
+
+    const updatedPost = await prisma.post.update({
+      where: { id: postId },
+      data: {
+        ...postData,
+        images: postData.images || [], // JSON field
+        postDetail: {
+          update: {
+            ...postDetail,
+          },
+        },
+      },
+      include: {
+        postDetail: true,
+      },
+    });
+
+    res.status(200).json(updatedPost);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Failed to update posts" });
+    console.error("Failed to update post:", err);
+    res.status(500).json({ message: "Failed to update post" });
   }
 };
 
@@ -161,5 +206,47 @@ export const deletePost = async (req, res) => {
   } catch (err) {
     console.error("Error deleting post:", err);
     res.status(500).json({ message: "Failed to delete post" });
+  }
+};
+/*
+export const incrementPostView = async (req, res) => {
+  const postId = parseInt(req.params.postId);
+  console.log("Received postId:", postId);
+
+  // Check if postId is valid
+  if (isNaN(postId)) {
+    return res.status(400).json({ message: "Invalid post ID" });
+  }
+
+  try {
+    // Attempt to increment the view count
+    const post = await prisma.postDetail.update({
+      where: { postId }, // Use postId for the update condition
+      data: {
+        views: { increment: 1 }, // Increment view count by 1
+      },
+    });
+
+    res.status(200).json({ views: post.views }); // Return updated views
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to increment views" });
+  }
+};
+*/
+
+export const incrementPostView = async (req, res) => {
+  const postId = parseInt(req.params.postId);
+
+  try {
+    const post = await prisma.post.update({
+      where: { id: postId },
+      data: { views: { increment: 1 } },
+    });
+
+    res.status(200).json({ views: post.views });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to increment views" });
   }
 };
