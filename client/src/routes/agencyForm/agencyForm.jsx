@@ -1,16 +1,6 @@
-import React, { useState } from "react";
-import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  Grid,
-  InputLabel,
-  Snackbar,
-  Alert,
-} from "@mui/material";
-import { useContext } from "react";
-import { AuthContext } from "../../context/AuthContext"; // adjust path if needed
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import "./agencyForm.scss";
 
 function AgencyApplicationForm() {
   const { currentUser } = useContext(AuthContext);
@@ -30,176 +20,194 @@ function AgencyApplicationForm() {
     },
   });
 
-  const [submitting, setSubmitting] = useState(false);
-  const [snackOpen, setSnackOpen] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleFileChange = (e) => {
-    setFormData({
-      ...formData,
+    const { name, files } = e.target;
+    setFormData((prev) => ({
+      ...prev,
       files: {
-        ...formData.files,
-        [e.target.name]: e.target.files[0],
+        ...prev.files,
+        [name]: files[0] || null,
       },
-    });
-  };
-
-  const resetForm = () => {
-    setFormData({
-      agencyName: "",
-      representativeName: "",
-      email: "",
-      phone: "",
-      address: "",
-      registrationNumber: "",
-      message: "",
-      files: {
-        license: null,
-        registrationPaper: null,
-        idProof: null,
-      },
-    });
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitting(true);
 
-    const form = new FormData();
+    const data = new FormData();
+    data.append("agencyName", formData.agencyName);
+    data.append("representativeName", formData.representativeName);
+    data.append("email", formData.email);
+    data.append("phone", formData.phone);
+    data.append("address", formData.address);
+    data.append("registrationNumber", formData.registrationNumber);
+    data.append("message", formData.message);
+    data.append("submittedBy", currentUser?.username || "");
+    data.append("submittedEmail", currentUser?.email || "");
 
-    Object.keys(formData).forEach((key) => {
-      if (key !== "files") {
-        form.append(key, formData[key]);
-      }
-    });
-
-    form.append("license", formData.files.license);
-    form.append("registrationPaper", formData.files.registrationPaper);
-    form.append("idProof", formData.files.idProof);
-
-    // Attach user data
-    form.append("submittedBy", currentUser?.username || "");
-    form.append("submittedEmail", currentUser?.email || "");
+    if (formData.files.license) data.append("license", formData.files.license);
+    if (formData.files.registrationPaper)
+      data.append("registrationPaper", formData.files.registrationPaper);
+    if (formData.files.idProof) data.append("idProof", formData.files.idProof);
 
     try {
       const res = await fetch("http://localhost:8800/api/apply", {
         method: "POST",
-        body: form,
+        body: data,
       });
 
-      if (res.ok) {
-        setSnackOpen(true);
-        resetForm();
-      } else {
-        alert("Failed to submit application.");
-      }
+      if (!res.ok) throw new Error("Failed to submit application");
+
+      setShowPopup(true);
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 5000); // Redirect after 5 seconds
     } catch (err) {
-      console.error(err);
-      alert("Error occurred during submission.");
-    } finally {
-      setSubmitting(false);
+      console.error("Submission error:", err);
+      alert("There was an error submitting the application.");
     }
   };
 
   return (
-    <Box
-      sx={{
-        p: 4,
-        maxWidth: 700,
-        mx: "auto",
-        background: "#f9f9f9",
-        borderRadius: 2,
-      }}
-    >
-      <Typography variant="h4" gutterBottom>
-        Agency Application Form
-      </Typography>
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <Grid container spacing={2}>
-          {[
-            { label: "Agency Name", name: "agencyName" },
-            { label: "Representative Name", name: "representativeName" },
-            { label: "Email", name: "email", type: "email", half: true },
-            { label: "Phone", name: "phone", half: true },
-            { label: "Address", name: "address", multiline: true, rows: 2 },
-            { label: "Registration Number", name: "registrationNumber" },
-          ].map((field, i) => (
-            <Grid item xs={field.half ? 6 : 12} key={i}>
-              <TextField
-                fullWidth
-                label={field.label}
-                name={field.name}
-                value={formData[field.name]}
-                onChange={handleChange}
-                multiline={field.multiline || false}
-                rows={field.rows || 1}
-                type={field.type || "text"}
-                required
-              />
-            </Grid>
-          ))}
+    <div className="agencyFormPage">
+      {showPopup && (
+        <div className="popup">
+          <p>
+            ✅ Application submitted successfully! Redirecting to homepage in 5
+            seconds...
+          </p>
+        </div>
+      )}
 
-          {[
-            { label: "Business License", name: "license" },
-            { label: "Company Registration Paper", name: "registrationPaper" },
-            { label: "Representative ID Proof", name: "idProof" },
-          ].map((file, i) => (
-            <Grid item xs={12} key={i}>
-              <InputLabel>{file.label}</InputLabel>
-              <input
-                type="file"
-                name={file.name}
-                onChange={handleFileChange}
-                required
-              />
-            </Grid>
-          ))}
-
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Additional Notes"
+      <div className="formContainer">
+        <h1>Agency Application</h1>
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
+          {/* All form fields remain unchanged */}
+          <div className="item">
+            <label htmlFor="agencyName">Agency Name</label>
+            <input
+              id="agencyName"
+              name="agencyName"
+              type="text"
+              value={formData.agencyName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="item">
+            <label htmlFor="representativeName">Representative Name</label>
+            <input
+              id="representativeName"
+              name="representativeName"
+              type="text"
+              value={formData.representativeName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="item">
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="item">
+            <label htmlFor="phone">Phone</label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              value={formData.phone}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="item">
+            <label htmlFor="address">Address</label>
+            <input
+              id="address"
+              name="address"
+              type="text"
+              value={formData.address}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="item">
+            <label htmlFor="registrationNumber">Registration Number</label>
+            <input
+              id="registrationNumber"
+              name="registrationNumber"
+              type="text"
+              value={formData.registrationNumber}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="item">
+            <label htmlFor="message">Message (Optional)</label>
+            <textarea
+              id="message"
               name="message"
+              rows="4"
               value={formData.message}
               onChange={handleChange}
-              multiline
-              rows={3}
+              placeholder="Any additional information..."
             />
-          </Grid>
+          </div>
 
-          <Grid item xs={12}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              disabled={submitting}
-            >
-              {submitting ? "Submitting..." : "Submit Application"}
-            </Button>
-          </Grid>
-        </Grid>
-      </form>
+          {/* File Inputs */}
+          <div className="item">
+            <label htmlFor="license">License Document</label>
+            <input
+              id="license"
+              name="license"
+              type="file"
+              onChange={handleFileChange}
+              accept=".pdf,.jpg,.png"
+              required
+            />
+          </div>
+          <div className="item">
+            <label htmlFor="registrationPaper">Registration Paper</label>
+            <input
+              id="registrationPaper"
+              name="registrationPaper"
+              type="file"
+              onChange={handleFileChange}
+              accept=".pdf,.jpg,.png"
+              required
+            />
+          </div>
+          <div className="item">
+            <label htmlFor="idProof">ID Proof</label>
+            <input
+              id="idProof"
+              name="idProof"
+              type="file"
+              onChange={handleFileChange}
+              accept=".pdf,.jpg,.png"
+              required
+            />
+          </div>
 
-      <Snackbar
-        open={snackOpen}
-        autoHideDuration={5000}
-        onClose={() => setSnackOpen(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert
-          severity="success"
-          onClose={() => setSnackOpen(false)}
-          sx={{ width: "100%" }}
-        >
-          Application submitted! Your request to become an agency is under
-          review.
-        </Alert>
-      </Snackbar>
-    </Box>
+          <button className="sendButton" type="submit">
+            Submit Application
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }
 

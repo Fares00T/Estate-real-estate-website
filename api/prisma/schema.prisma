@@ -14,7 +14,7 @@ model User {
   password   String
   avatar     String?
   role       Role        @default(client)
-  createdAt  DateTime    @default(now())
+  createdAt  DateTime    @default(now())  
   posts      Post[]      // Relation to Post model
   savedPosts SavedPost[] // Relation to SavedPost model
   chats      ChatUser[]  // Join table for many-to-many relation with Chat
@@ -54,6 +54,7 @@ model Post {
   postDetail PostDetail?
   savedPosts SavedPost[] // Relation to SavedPost model
   views      Int         @default(0) // 👈 Add this line
+  
 }
 
 enum Type {
@@ -134,3 +135,4 @@ model Message {
   chat      Chat    @relation(fields: [chatId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
+

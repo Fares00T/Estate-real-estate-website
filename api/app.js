@@ -6,6 +6,7 @@ import userRoute from "./routes/user.route.js";
 import postRoute from "./routes/post.rout.js";
 import chatRoute from "./routes/chat.rout.js";
 import applyRoute from "./routes/apply.route.js";
+import reportRoute from "./routes/report.route.js";
 import messageRoute from "./routes/message.route.js";
 import statsRoutes from "./routes/statistics.route.js";
 import cookieParser from "cookie-parser";
@@ -38,6 +39,7 @@ app.use("/api/chats", chatRoute);
 app.use("/api/messages", messageRoute);
 app.use("/api/stats", statsRoutes);
 app.use("/api/apply", applyRoute);
+app.use("/api/report", reportRoute);
 
 app.listen(8800, () => {
   console.log("Server is running!");

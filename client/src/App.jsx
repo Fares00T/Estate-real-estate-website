@@ -17,6 +17,7 @@ import AdminPage from "./routes/Admin/Admin";
 import EditPost from "./routes/postUpdate/EditPost";
 import AgencyApplicationForm from "./routes/agencyForm/agencyForm";
 import AgenciesPage from "./routes/agenciesPage/agencies";
+import ReportPage from "./routes/report/report";
 
 function App() {
   const router = createBrowserRouter([
@@ -27,6 +28,10 @@ function App() {
         {
           path: "/agencies",
           element: <AgenciesPage />,
+        },
+        {
+          path: "/report",
+          element: <ReportPage />,
         },
         {
           path: "/",

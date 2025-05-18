@@ -28,6 +28,7 @@ import {
 } from "recharts";
 
 import { Gauge, gaugeClasses } from "@mui/x-charts/Gauge";
+import axios from "axios";
 
 function Profile() {
   const data = useLoaderData();

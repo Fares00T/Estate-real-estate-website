@@ -28,6 +28,7 @@ function Navbar() {
           <Link to="/agency">applay as an agency</Link>
         )}
         {currentUser?.role === "admin" && <Link to="/admin">Admin</Link>}
+        <a href="/report">Report</a>
       </div>
       <div className="right">
         {currentUser ? (

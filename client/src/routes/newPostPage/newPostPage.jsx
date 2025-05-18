@@ -3,10 +3,10 @@ import "./newPostPage.scss";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import apiRequest from "../../components/lib/apiRequest.js";
+import LocationPicker from "../../components/getloc/LocationPicker.jsx";
 import UploadWidget from "../../components/UploadWidget/UploadWidget";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
-
 import { FormControl, FormHelperText, TextField } from "@mui/material";
 
 function NewPostPage() {
@@ -185,16 +185,16 @@ function NewPostPage() {
             </div>
 
             <FormControl fullWidth>
+              <FormHelperText sx={{ mb: 3 }}>
+                🗺 Tip: Use the map under to chose your Latitude and Longitude
+              </FormHelperText>
               <TextField
                 label="Latitude"
                 name="latitude"
                 value={form.latitude}
                 onChange={handleChange}
+                disabled
               />
-              <FormHelperText>
-                🗺 Tip: Open Google Maps, right-click anywhere, and choose
-                "What's here?"—you’ll see coordinates.
-              </FormHelperText>
             </FormControl>
 
             <FormControl fullWidth>
@@ -203,6 +203,7 @@ function NewPostPage() {
                 name="longitude"
                 value={form.longitude}
                 onChange={handleChange}
+                disabled
               />
               <Button
                 variant="outlined"
@@ -212,6 +213,16 @@ function NewPostPage() {
                 📍 Get Current Location
               </Button>
             </FormControl>
+
+            <LocationPicker
+              onLocationChange={(coords) =>
+                setForm((prev) => ({
+                  ...prev,
+                  latitude: coords.lat.toFixed(6),
+                  longitude: coords.lng.toFixed(6),
+                }))
+              }
+            />
 
             <div className="item">
               <label htmlFor="type">Type</label>

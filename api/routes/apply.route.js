@@ -38,7 +38,7 @@ router.post(
         to: data.email,
         subject: `New Agency Application: ${data.agencyName}`,
         text: `
-<b>Submitted By:</b> ${data.submittedBy}
+Submitted By: ${data.submittedBy}
 Submitted Email: ${data.submittedEmail}
 Agency: ${data.agencyName}
 Representative: ${data.representativeName}
