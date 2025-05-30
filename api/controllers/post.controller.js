@@ -21,6 +21,7 @@ export const getPosts = async (req, res) => {
         user: {
           select: {
             role: true,
+            username: true,
           },
         },
       },
@@ -38,11 +39,18 @@ export const getPosts = async (req, res) => {
 };
 
 export const getPost = async (req, res) => {
-  const id = parseInt(req.params.id); // Convert to integer
+  const id = parseInt(req.params.id);
 
   try {
+    // Increment views by 1
+    await prisma.postDetail.update({
+      where: { postId: id },
+      data: { views: { increment: 1 } },
+    });
+
+    // Fetch the post including postDetail and user info
     const post = await prisma.post.findUnique({
-      where: { id }, // Now id is an Int
+      where: { id },
       include: {
         postDetail: true,
         user: {
@@ -70,7 +78,9 @@ export const getPost = async (req, res) => {
               },
             },
           });
-          res.status(200).json({ ...post, isSaved: saved ? true : false });
+          res.status(200).json({ ...post, isSaved: !!saved });
+        } else {
+          res.status(200).json({ ...post, isSaved: false });
         }
       });
     } else {
@@ -87,21 +97,39 @@ export const addPost = async (req, res) => {
   const tokenUserId = req.userId;
 
   try {
+    // 1. Create the post and get its ID
     const newPost = await prisma.post.create({
       data: {
         ...body.postData,
         userId: tokenUserId,
-        postDetail: {
-          create: body.postDetail,
-        },
       },
     });
-    res.status(200).json(newPost);
+
+    // 2. Generate Matricule using postId
+    const generateMatricule = (postId) =>
+      `PROP-${postId.toString().padStart(6, "0")}`;
+    const matricule = generateMatricule(newPost.id);
+
+    // 3. Create the postDetail with Matricule and postId
+    const newPostDetail = await prisma.postDetail.create({
+      data: {
+        ...body.postDetail,
+        postId: newPost.id,
+        Matricule: matricule,
+      },
+    });
+
+    res.status(200).json({
+      ...newPost,
+      postDetail: newPostDetail,
+    });
   } catch (err) {
-    console.log(err);
+    console.error("Failed to create post:", err);
     res.status(500).json({ message: "Failed to create post" });
   }
 };
+
+// In post.controller.js, update the updatePost function:
 
 export const updatePost = async (req, res) => {
   const postId = parseInt(req.params.id, 10);
@@ -126,20 +154,29 @@ export const updatePost = async (req, res) => {
       return res.status(403).json({ message: "Not Authorized!" });
     }
 
-    const updatedPost = await prisma.post.update({
-      where: { id: postId },
-      data: {
-        ...postData,
-        images: postData.images || [], // JSON field
-        postDetail: {
-          update: {
-            ...postDetail,
-          },
+    // Use a transaction to ensure both post and postDetail are updated together
+    const updatedPost = await prisma.$transaction(async (tx) => {
+      // Update the main post
+      const updatedPost = await tx.post.update({
+        where: { id: postId },
+        data: {
+          ...postData,
+          images: postData.images || [],
         },
-      },
-      include: {
-        postDetail: true,
-      },
+      });
+
+      // Update the post details
+      const updatedPostDetail = await tx.postDetail.update({
+        where: { postId: postId },
+        data: {
+          ...postDetail,
+        },
+      });
+
+      return {
+        ...updatedPost,
+        postDetail: updatedPostDetail,
+      };
     });
 
     res.status(200).json(updatedPost);
@@ -239,7 +276,7 @@ export const incrementPostView = async (req, res) => {
   const postId = parseInt(req.params.postId);
 
   try {
-    const post = await prisma.post.update({
+    const post = await prisma.postDetail.update({
       where: { id: postId },
       data: { views: { increment: 1 } },
     });

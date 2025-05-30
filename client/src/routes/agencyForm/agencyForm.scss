@@ -46,11 +46,10 @@ body,
     z-index: 9999;
     font-size: 16px;
   }
-
   .formContainer {
     width: 100%;
     max-width: 1000px;
-    background-color: var(--color-bg);
+    //background-color: ;
     border-radius: var(--radius);
     padding: var(--spacing);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);

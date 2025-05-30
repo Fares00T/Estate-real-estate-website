@@ -127,7 +127,7 @@ function Chat({ chats, receiverId, onClose }) {
     <div className="chat">
       <div className="messages">
         <h1>Messages</h1>
-        {chats.map((c) => {
+        {[...chats].reverse().map((c) => {
           const isDeleted = !c.receiver;
 
           return (

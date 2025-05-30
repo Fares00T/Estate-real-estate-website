@@ -23,6 +23,20 @@ function NewPostPage() {
     // add other fields as needed
   });
 
+  const [inputs, setInputs] = useState({
+    kindergarten: false,
+    primarySchool: false,
+    middleSchool: false,
+    highSchool: false,
+    university: false,
+
+    carPark: false,
+    transportation: false,
+    mosque: false,
+    pharmacy: false,
+    commercialArea: false,
+  });
+
   const navigate = useNavigate();
 
   // Load cities from JSON
@@ -61,19 +75,26 @@ function NewPostPage() {
           type: inputs.type,
           property: inputs.property,
           propertyType: inputs.propertyType,
-          latitude: inputs.latitude,
-          longitude: inputs.longitude,
+          latitude: form.latitude, // ✅ Fix here
+          longitude: form.longitude, // ✅ Fix here
           images: images,
         },
         postDetail: {
           desc: value,
-          utilities: inputs.utilities,
-          pet: inputs.pet,
-          income: inputs.income,
+          utilities: inputs.utilities ? "yes" : "no",
+          pet: inputs.pet ? "yes" : "no",
+          Furnished: inputs.Furnished ? "yes" : "no",
           size: parseInt(inputs.size),
-          school: parseInt(inputs.school),
-          bus: parseInt(inputs.bus),
-          restaurant: parseInt(inputs.restaurant),
+          kindergarten: inputs.kindergarten ? "yes" : "no",
+          primarySchool: inputs.primarySchool ? "yes" : "no",
+          middleSchool: inputs.middleSchool ? "yes" : "no",
+          highSchool: inputs.highSchool ? "yes" : "no",
+          university: inputs.university ? "yes" : "no",
+          carPark: inputs.carPark ? "yes" : "no",
+          transportation: inputs.transportation ? "yes" : "no",
+          mosque: inputs.mosque ? "yes" : "no",
+          pharmacy: inputs.pharmacy ? "yes" : "no",
+          commercialArea: inputs.commercialArea ? "yes" : "no",
         },
       });
       navigate("/" + res.data.id);
@@ -123,7 +144,7 @@ function NewPostPage() {
               <input id="price" name="price" type="number" required />
             </div>
             <div className="item">
-              <label htmlFor="address">Address</label>
+              <label htmlFor="address">Street</label>
               <input id="address" name="address" type="text" required />
             </div>
             <div className="item description">
@@ -189,7 +210,8 @@ function NewPostPage() {
                 🗺 Tip: Use the map under to chose your Latitude and Longitude
               </FormHelperText>
               <TextField
-                label="Latitude"
+                id="latitude"
+                label="latitude"
                 name="latitude"
                 value={form.latitude}
                 onChange={handleChange}
@@ -199,7 +221,8 @@ function NewPostPage() {
 
             <FormControl fullWidth>
               <TextField
-                label="Longitude"
+                id="longitude"
+                label="longitude"
                 name="longitude"
                 value={form.longitude}
                 onChange={handleChange}
@@ -273,7 +296,10 @@ function NewPostPage() {
 
             <div className="item">
               <label htmlFor="utilities">Utilities Included</label>
-              <select name="utilities" id="utilities">
+              <select name="utilities" id="utilities" defaultValue="">
+                <option value="" disabled hidden>
+                  Select...
+                </option>
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
               </select>
@@ -281,7 +307,20 @@ function NewPostPage() {
 
             <div className="item">
               <label htmlFor="pet">Pets Allowed</label>
-              <select name="pet" id="pet">
+              <select name="pet" id="pet" defaultValue="">
+                <option value="" disabled hidden>
+                  Select...
+                </option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+            <div className="item">
+              <label htmlFor="Furnished">Furnished?</label>
+              <select name="Furnished" id="Furnished" defaultValue="">
+                <option value="" disabled hidden>
+                  Select...
+                </option>
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
               </select>
@@ -292,21 +331,185 @@ function NewPostPage() {
               <input id="size" name="size" type="number" required />
             </div>
 
+            <div className="item"></div>
             <div className="item">
-              <label htmlFor="school">Nearby Schools</label>
-              <input id="school" name="school" type="number" required />
+              <h1>
+                Nearby places <br />
+              </h1>
+            </div>
+            <div className="item"></div>
+            <div className="item"></div>
+            <div className="item"></div>
+
+            <div className="item">
+              <label>
+                <input
+                  type="checkbox"
+                  name="kindergarten"
+                  checked={inputs.kindergarten === "yes"}
+                  onChange={(e) =>
+                    setInputs((prev) => ({
+                      ...prev,
+                      kindergarten: e.target.checked ? "yes" : "no",
+                    }))
+                  }
+                />
+                Kindergarten Nearby
+              </label>
             </div>
 
             <div className="item">
-              <label htmlFor="bus">Nearby Bus Stops</label>
-              <input id="bus" name="bus" type="number" required />
+              <label>
+                <input
+                  type="checkbox"
+                  name="primarySchool"
+                  checked={inputs.primarySchool === "yes"}
+                  onChange={(e) =>
+                    setInputs((prev) => ({
+                      ...prev,
+                      primarySchool: e.target.checked ? "yes" : "no",
+                    }))
+                  }
+                />
+                Primary School Nearby
+              </label>
             </div>
 
             <div className="item">
-              <label htmlFor="restaurant">Nearby Restaurants</label>
-              <input id="restaurant" name="restaurant" type="number" required />
+              <label>
+                <input
+                  type="checkbox"
+                  name="middleSchool"
+                  checked={inputs.middleSchool === "yes"}
+                  onChange={(e) =>
+                    setInputs((prev) => ({
+                      ...prev,
+                      middleSchool: e.target.checked ? "yes" : "no",
+                    }))
+                  }
+                />
+                Middle School Nearby
+              </label>
             </div>
 
+            <div className="item">
+              <label>
+                <input
+                  type="checkbox"
+                  name="highSchool"
+                  checked={inputs.highSchool === "yes"}
+                  onChange={(e) =>
+                    setInputs((prev) => ({
+                      ...prev,
+                      highSchool: e.target.checked ? "yes" : "no",
+                    }))
+                  }
+                />
+                High School Nearby
+              </label>
+            </div>
+
+            <div className="item">
+              <label>
+                <input
+                  type="checkbox"
+                  name="university"
+                  checked={inputs.university === "yes"}
+                  onChange={(e) =>
+                    setInputs((prev) => ({
+                      ...prev,
+                      university: e.target.checked ? "yes" : "no",
+                    }))
+                  }
+                />
+                University Nearby
+              </label>
+            </div>
+
+            <div className="item">
+              <label>
+                <input
+                  type="checkbox"
+                  name="carPark"
+                  checked={inputs.carPark === "yes"}
+                  onChange={(e) =>
+                    setInputs((prev) => ({
+                      ...prev,
+                      carPark: e.target.checked ? "yes" : "no",
+                    }))
+                  }
+                />
+                Car Park Available
+              </label>
+            </div>
+
+            <div className="item">
+              <label>
+                <input
+                  type="checkbox"
+                  name="transportation"
+                  checked={inputs.transportation === "yes"}
+                  onChange={(e) =>
+                    setInputs((prev) => ({
+                      ...prev,
+                      transportation: e.target.checked ? "yes" : "no",
+                    }))
+                  }
+                />
+                Public Transportation Nearby
+              </label>
+            </div>
+
+            <div className="item">
+              <label>
+                <input
+                  type="checkbox"
+                  name="mosque"
+                  checked={inputs.mosque === "yes"}
+                  onChange={(e) =>
+                    setInputs((prev) => ({
+                      ...prev,
+                      mosque: e.target.checked ? "yes" : "no",
+                    }))
+                  }
+                />
+                Mosque Nearby
+              </label>
+            </div>
+
+            <div className="item">
+              <label>
+                <input
+                  type="checkbox"
+                  name="pharmacy"
+                  checked={inputs.pharmacy === "yes"}
+                  onChange={(e) =>
+                    setInputs((prev) => ({
+                      ...prev,
+                      pharmacy: e.target.checked ? "yes" : "no",
+                    }))
+                  }
+                />
+                Pharmacy Nearby
+              </label>
+            </div>
+
+            <div className="item">
+              <label>
+                <input
+                  type="checkbox"
+                  name="commercialArea"
+                  checked={inputs.commercialArea === "yes"}
+                  onChange={(e) =>
+                    setInputs((prev) => ({
+                      ...prev,
+                      commercialArea: e.target.checked ? "yes" : "no",
+                    }))
+                  }
+                />
+                Commercial Area Nearby
+              </label>
+            </div>
             <button className="sendButton">Add</button>
             {error && <span>{error}</span>}
           </form>

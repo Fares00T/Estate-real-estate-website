@@ -49,6 +49,7 @@ nav {
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    gap: 20px;
     //background-color: #fcf5f3;
     height: 100%;
 
@@ -56,22 +57,18 @@ nav {
       background-color: transparent;
     }
 
-    a {
-      padding: 12px 24px;
-      margin: 20px;
-    }
-
     .user {
       display: flex;
       align-items: center;
       font-weight: bold;
 
-      img {
+      .userimg {
         width: 40px;
         height: 40px;
         border-radius: 50%;
         object-fit: cover;
         margin-right: 20px;
+        //background-color: red; /* TEMP: to see if the image container is visible */
       }
 
       .agency-label {
@@ -155,6 +152,10 @@ nav {
 
       &.active {
         right: 0;
+        z-index: 1;
+      }
+      .profilemobile {
+        color: white;
       }
 
       @include sm {

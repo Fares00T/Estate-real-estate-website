@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import "./card.scss";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 function Card({ item, onDelete }) {
+  const { currentUser } = useContext(AuthContext);
   const isAgency = item.user?.role === "agency";
   return (
     <div className="card">
@@ -11,13 +13,13 @@ function Card({ item, onDelete }) {
       </Link>
       <div className="textContainer">
         <h2 className="title">
-          <Link to={`/${item.id}`}>{item.title}</Link>
+          <Link to={`/${item.id}`}>{item.title} </Link>
         </h2>
         <p className="address">
           <img src="/pin.png" alt="" />
           <span>{item.address}</span>
-          <span>{item.city}</span>
           <span>{item.district}</span>
+          <span>{item.city}</span>
         </p>
         <p className="price">DZD {item.price}</p>
         <div className="bottom">

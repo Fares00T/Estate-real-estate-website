@@ -62,7 +62,9 @@ function Login() {
           <Link to="/register">{"Don't"} you have an account?</Link>
         </form>
       </div>
-      <div className="imgContainer"></div>
+      <div className="imgContainer">
+        <img src="/public/bg1.png"></img>
+      </div>
     </div>
   );
 }

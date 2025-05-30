@@ -25,6 +25,9 @@ model User {
   location   String?
   website    String?
   about      String?
+
+  tourRequestsAsClient TourRequest[] @relation("ClientTourRequests")
+  tourRequestsAsAgency TourRequest[] @relation("AgencyTourRequests")
 }
 
 enum Role {
@@ -53,8 +56,7 @@ model Post {
   userId     Int
   postDetail PostDetail?
   savedPosts SavedPost[] // Relation to SavedPost model
-  views      Int         @default(0) // 👈 Add this line
-  
+  tourRequests TourRequest[]
 }
 
 enum Type {
@@ -87,14 +89,24 @@ model PostDetail {
   desc       String
   utilities  String?
   pet        String?
-  income     String?
   size       Int?
-  school     Int?
-  bus        Int?
-  restaurant Int?
+  Furnished  String?
   post       Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId     Int     @unique
   views      Int         @default(0) // 👈 Add this line
+  Matricule  String?
+  
+    // New Nearby Facilities
+  primarySchool     String?
+  kindergarten      String?
+  university        String?
+  carPark           String?
+  transportation    String?
+  highSchool        String?
+  middleSchool      String?
+  mosque            String?
+  pharmacy          String?
+  commercialArea        String?
 }
 
 model SavedPost {
@@ -136,3 +148,31 @@ model Message {
   createdAt DateTime @default(now())
 }
 
+model TourRequest {
+  id             Int               @id @default(autoincrement())
+  propertyId     Int
+  clientId       Int
+  agencyId       Int
+  preferredDate  String
+  preferredTime  String
+  contactPhone   String
+  message        String?
+  status         TourRequestStatus @default(pending)
+  confirmedDate  String?
+  confirmedTime  String?
+  declineReason  String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  property       Post  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  client         User  @relation("ClientTourRequests", fields: [clientId], references: [id], onDelete: Cascade)
+  agency         User  @relation("AgencyTourRequests", fields: [agencyId], references: [id], onDelete: Cascade)
+}
+
+enum TourRequestStatus {
+  pending
+  confirmed
+  declined
+  completed
+  cancelled
+}

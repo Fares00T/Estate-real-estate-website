@@ -1,18 +1,7 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  Paper,
-  Snackbar,
-} from "@mui/material";
+import "./Report.scss";
 
 export default function ReportPage() {
   const [reportType, setReportType] = useState("post");
@@ -26,8 +15,8 @@ export default function ReportPage() {
     screenshot: null,
   });
   const [feedback, setFeedback] = useState("");
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const navigate = useNavigate(); // useNavigate hook
+  const [showPopup, setShowPopup] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -47,170 +36,121 @@ export default function ReportPage() {
     data.append("details", formData.details);
     data.append("submittedBy", formData.submittedBy);
     data.append("submittedEmail", formData.submittedEmail);
-    if (formData.screenshot) {
-      data.append("screenshot", formData.screenshot);
-    }
+    if (formData.screenshot) data.append("screenshot", formData.screenshot);
 
     try {
-      const res = await axios.post("http://localhost:8800/api/report", data);
-      setFeedback("Your report has been successfully submitted.");
-      setOpenSnackbar(true); // Show Snackbar on success
-
-      // Navigate to home after 10 seconds
-      setTimeout(() => {
-        navigate("/"); // Redirect to home page
-      }, 1000);
+      await axios.post("http://localhost:8800/api/report", data);
+      setFeedback("✅ Report submitted successfully.");
+      setShowPopup(true);
+      setTimeout(() => navigate("/"), 5000);
     } catch (err) {
-      setFeedback("Failed to submit the report. Please try again.");
-      setOpenSnackbar(true); // Show Snackbar on error
+      setFeedback("❌ Failed to submit. Try again.");
+      setShowPopup(true);
       console.error(err);
     }
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "flex-start",
-        justifyContent: "center",
-        minHeight: "100vh",
-        overflowY: "auto",
-        backgroundColor: "white",
-      }}
-    >
-      <Paper elevation={3} sx={{ p: 2, maxWidth: 1000, width: "100%" }}>
-        <Typography variant="h5" gutterBottom>
-          Report a Post or User
-        </Typography>
+    <div className="report-page">
+      <form className="report-form" onSubmit={handleSubmit}>
+        <h2>Report a Post or User</h2>
 
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          encType="multipart/form-data"
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            gap: 2,
-          }}
+        <label>Report Type</label>
+        <select
+          name="reportType"
+          value={reportType}
+          onChange={(e) => setReportType(e.target.value)}
+          required
         >
-          <FormControl fullWidth sx={{ flex: "1 1 45%" }}>
-            <InputLabel>Report Type</InputLabel>
-            <Select
-              value={reportType}
-              onChange={(e) => setReportType(e.target.value)}
-              label="Report Type"
-              name="reportType"
-            >
-              <MenuItem value="post">Post</MenuItem>
-              <MenuItem value="user">User</MenuItem>
-            </Select>
-          </FormControl>
+          <option value="post">Post</option>
+          <option value="user">User</option>
+        </select>
 
-          {reportType === "post" && (
-            <TextField
+        {reportType === "post" && (
+          <>
+            <label>Reported Post ID</label>
+            <input
+              type="text"
               name="reportedPostId"
-              label="Reported Post ID"
-              fullWidth
-              sx={{ flex: "1 1 45%" }}
               value={formData.reportedPostId}
               onChange={handleChange}
               required
             />
-          )}
+          </>
+        )}
 
-          {reportType === "user" && (
-            <TextField
+        {reportType === "user" && (
+          <>
+            <label>Reported Username or ID</label>
+            <input
+              type="text"
               name="reportedUser"
-              label="Reported Username or ID"
-              fullWidth
-              sx={{ flex: "1 1 45%" }}
               value={formData.reportedUser}
               onChange={handleChange}
               required
             />
-          )}
+          </>
+        )}
 
-          <TextField
-            name="reason"
-            label="Reason"
-            fullWidth
-            sx={{ flex: "1 1 45%" }}
-            value={formData.reason}
-            onChange={handleChange}
-            required
-          />
-
-          <TextField
-            name="details"
-            label="Additional Details"
-            multiline
-            rows={4}
-            fullWidth
-            sx={{ flex: "1 1 100%" }}
-            value={formData.details}
-            onChange={handleChange}
-          />
-
-          <TextField
-            name="submittedBy"
-            label="Your Name"
-            fullWidth
-            sx={{ flex: "1 1 45%" }}
-            value={formData.submittedBy}
-            onChange={handleChange}
-            required
-          />
-
-          <TextField
-            name="submittedEmail"
-            label="Your Email"
-            type="email"
-            fullWidth
-            sx={{ flex: "1 1 45%" }}
-            value={formData.submittedEmail}
-            onChange={handleChange}
-            required
-          />
-
-          <Box
-            sx={{ display: "flex", flexDirection: "column", flex: "1 1 100%" }}
-          >
-            <Button variant="contained" component="label">
-              Upload Screenshot (optional)
-              <input
-                type="file"
-                name="screenshot"
-                hidden
-                accept="image/*"
-                onChange={handleChange}
-              />
-            </Button>
-            {formData.screenshot && (
-              <Typography variant="body2" mt={1}>
-                Selected: {formData.screenshot.name}
-              </Typography>
-            )}
-            <Button
-              type="submit"
-              variant="contained"
-              color="error"
-              sx={{ flex: "1 1 100%", mt: 1 }}
-            >
-              Submit Report
-            </Button>
-          </Box>
-        </Box>
-
-        {/* Snackbar to show feedback message */}
-        <Snackbar
-          open={openSnackbar}
-          autoHideDuration={6000}
-          onClose={() => setOpenSnackbar(false)}
-          message={feedback}
+        <label>Reason</label>
+        <input
+          type="text"
+          name="reason"
+          value={formData.reason}
+          onChange={handleChange}
+          required
         />
-      </Paper>
-    </Box>
+
+        <label>Details (optional)</label>
+        <textarea
+          name="details"
+          rows={4}
+          value={formData.details}
+          onChange={handleChange}
+        />
+
+        <label>Your Name</label>
+        <input
+          type="text"
+          name="submittedBy"
+          value={formData.submittedBy}
+          onChange={handleChange}
+          required
+        />
+
+        <label>Your Email</label>
+        <input
+          type="email"
+          name="submittedEmail"
+          value={formData.submittedEmail}
+          onChange={handleChange}
+          required
+        />
+
+        <label>Upload Screenshot (optional)</label>
+        <input
+          type="file"
+          name="screenshot"
+          accept="image/*"
+          onChange={handleChange}
+        />
+        {formData.screenshot && (
+          <span className="filename">{formData.screenshot.name}</span>
+        )}
+
+        <button type="submit" className="submit-btn">
+          Submit Report
+        </button>
+      </form>
+
+      {showPopup && (
+        <div className="popup">
+          <p>
+            ✅ report submitted successfully! Redirecting to homepage in 5
+            seconds...
+          </p>
+        </div>
+      )}
+    </div>
   );
 }

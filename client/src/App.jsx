@@ -14,12 +14,17 @@ import {
   singlePageLoader,
 } from "./components/lib/loaders";
 import AdminPage from "./routes/Admin/Admin";
-import EditPost from "./routes/postUpdate/EditPost";
+import EditPost from "./routes/editpost/EditPost";
 import AgencyApplicationForm from "./routes/agencyForm/agencyForm";
 import AgenciesPage from "./routes/agenciesPage/agencies";
 import ReportPage from "./routes/report/report";
+import AgencyDashboard from "./routes/agencyDashboard/agencyDashboard";
+import { useContext } from "react";
+import { AuthContext } from "./context/AuthContext";
 
 function App() {
+  const { currentUser } = useContext(AuthContext);
+
   const router = createBrowserRouter([
     {
       path: "/",
@@ -82,6 +87,10 @@ function App() {
         {
           path: "/edit-post/:id",
           element: <EditPost />,
+        },
+        {
+          path: "/agency-dashboard",
+          element: <AgencyDashboard currentUser={currentUser} />,
         },
       ],
     },

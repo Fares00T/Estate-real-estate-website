@@ -2,11 +2,23 @@
 
 .card {
   display: flex;
-  gap: 20px;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background-color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  }
 
   .imageContainer {
     flex: 2;
     height: 200px;
+    overflow: hidden;
+    border-radius: 1rem;
 
     @include md {
       display: none;
@@ -16,111 +28,131 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 10px;
+      border-radius: inherit;
     }
   }
+
   .textContainer {
     flex: 3;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: 10px;
+    gap: 1rem;
 
     img {
-      width: 16px;
-      height: 16px;
+      width: 1rem;
+      height: 1rem;
     }
 
     .title {
-      font-size: 20px;
+      font-size: 1.25rem;
       font-weight: 600;
-      color: #444;
-      transition: all 0.4s ease;
+      color: #333;
+      transition: color 0.3s ease, transform 0.3s ease;
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
 
       &:hover {
-        color: #000;
-        scale: 1.01;
+        color: #111;
+        transform: scale(1.02);
+      }
+
+      span {
+        font-weight: 400;
+        font-size: 0.9rem;
+        color: #666;
+        margin-left: 0.5rem;
       }
     }
 
     .address {
-      font-size: 14px;
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
-      gap: 5px;
-      color: #888;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: #777;
     }
 
     .price {
-      font-size: 20px;
-      font-weight: 300;
-      padding: 5px;
-      border-radius: 5px;
-      background-color: rgba(254, 205, 81, 0.438);
-      width: max-content;
+      font-size: 1.2rem;
+      font-weight: 500;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.5rem;
+      background-color: rgba(255, 193, 7, 0.2);
+      width: fit-content;
+      color: #b37400;
     }
 
     .bottom {
       display: flex;
       justify-content: space-between;
-      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
 
       .features {
         display: flex;
-        gap: 10px;
-        font-size: 14px;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        font-size: 0.9rem;
 
-        .feature {
-          display: flex;
-          align-items: center;
-          gap: 5px;
-          background-color: whitesmoke;
-          padding: 5px;
-          border-radius: 5px;
-        }
-
+        .feature,
         .featureagency {
           display: flex;
           align-items: center;
-          gap: 5px;
-          background-color: green;
-          color: white;
-          padding: 5px;
-          border-radius: 5px;
+          gap: 0.5rem;
+          padding: 0.5rem 0.75rem;
+          border-radius: 0.5rem;
+          background-color: #f8f9fa;
+
+          img {
+            width: 1rem;
+            height: 1rem;
+          }
+        }
+
+        .featureagency {
+          background-color: #28a745;
+          color: #fff;
+          font-weight: 500;
         }
       }
 
       .icons {
         display: flex;
-        gap: 20px;
+        gap: 1rem;
 
         .icon {
-          border: 1px solid #999;
-          padding: 2px 5px;
-          border-radius: 5px;
+          padding: 0.4rem 0.6rem;
+          border: 1px solid #ccc;
+          border-radius: 0.5rem;
           cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          transition: background-color 0.3s ease;
 
           &:hover {
-            background-color: lightgray;
+            background-color: #f1f1f1;
           }
         }
       }
     }
+
     .deleteBtn {
-      background-color: #d9534f;
-      color: white;
-      padding: 8px 12px;
+      align-self: flex-start;
+      background-color: #dc3545;
+      color: #fff;
+      padding: 0.5rem 1rem;
       border: none;
-      border-radius: 5px;
-      font-size: 14px;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 500;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: background-color 0.3s ease;
 
       &:hover {
-        background-color: #c9302c;
+        background-color: #c82333;
       }
     }
   }

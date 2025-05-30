@@ -14,6 +14,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { format } from "date-fns";
 import { Alert } from "@mui/material";
+import UserTourRequests from "../../components/userTourRequests/UserTourRequests";
 import {
   BarChart,
   Bar,
@@ -111,6 +112,21 @@ function Profile() {
             )}
             <button onClick={handleLogout}>Logout</button>
           </div>
+          {currentUser?.role === "agency" && (
+            <Link to="/agency-dashboard">
+              <button className="btn btn-dashboard">
+                📊 Tour Requests Dashboard
+              </button>
+            </Link>
+          )}
+          {currentUser?.role === "client" && (
+            <>
+              <div className="title">
+                <h1>Tour Requests</h1>
+              </div>
+              <UserTourRequests currentUser={currentUser} />
+            </>
+          )}
           {currentUser?.role !== "admin" ? (
             <>
               <div className="title">
@@ -184,15 +200,25 @@ function Profile() {
                       (p) => p.date === selectedDateStr
                     );
 
-                    // Combine data for chart
-                    const chartData = usersByDay.map((u) => {
-                      const post = postsByDay.find((p) => p.date === u.date);
+                    // ✅ Here is the new merged logic:
+                    const allDates = Array.from(
+                      new Set([
+                        ...usersByDay.map((u) => u.date),
+                        ...postsByDay.map((p) => p.date),
+                      ])
+                    ).sort();
+
+                    const chartData = allDates.map((date) => {
+                      const userEntry = usersByDay.find((u) => u.date === date);
+                      const postEntry = postsByDay.find((p) => p.date === date);
+
                       return {
-                        date: u.date,
-                        users: u.count,
-                        posts: post?.count || 0,
+                        date,
+                        users: userEntry?.count || 0,
+                        posts: postEntry?.count || 0,
                       };
                     });
+
                     console.log("Chart Data:", chartData);
                     return (
                       <Box>

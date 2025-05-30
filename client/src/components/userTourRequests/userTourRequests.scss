@@ -1,0 +1,331 @@
+.user-tour-requests {
+  .section-header {
+    margin-bottom: 24px;
+
+    h2 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: #6b7280;
+      margin: 0;
+    }
+  }
+
+  .loading {
+    text-align: center;
+    padding: 40px;
+    color: #6b7280;
+  }
+
+  .error-message {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+  }
+
+  .no-requests {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    .no-requests-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      font-size: 18px;
+      font-weight: 500;
+      color: #111827;
+      margin: 0 0 8px 0;
+    }
+
+    p {
+      color: #6b7280;
+      margin: 0;
+    }
+  }
+
+  .requests-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .request-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: all 0.2s;
+
+      &:hover {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      &.completed {
+        opacity: 0.8;
+      }
+
+      .request-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 20px 24px 16px;
+        border-bottom: 1px solid #f3f4f6;
+
+        .property-info {
+          flex: 1;
+
+          h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin: 0 0 4px 0;
+          }
+
+          .property-address {
+            color: #6b7280;
+            margin: 0;
+            font-size: 14px;
+          }
+        }
+
+        .status-badge {
+          padding: 4px 12px;
+          border-radius: 20px;
+          font-size: 12px;
+          font-weight: 500;
+
+          &.status-pending {
+            background: #fef3c7;
+            color: #92400e;
+          }
+
+          &.status-confirmed {
+            background: #d1fae5;
+            color: #065f46;
+          }
+
+          &.status-declined {
+            background: #fee2e2;
+            color: #991b1b;
+          }
+
+          &.status-completed {
+            background: #f3f4f6;
+            color: #374151;
+          }
+
+          &.status-cancelled {
+            background: #f3f4f6;
+            color: #6b7280;
+          }
+        }
+      }
+
+      .request-details {
+        padding: 16px 24px;
+
+        .detail-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+          margin-bottom: 16px;
+        }
+
+        .detail-group {
+          margin-bottom: 12px;
+
+          label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+          }
+
+          .detail-value {
+            font-size: 14px;
+            color: #111827;
+            display: flex;
+            align-items: center;
+          }
+
+          .message-content {
+            font-size: 14px;
+            color: #374151;
+            background: #f9fafb;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #d1d5db;
+          }
+        }
+      }
+
+      .confirmation-info,
+      .decline-info {
+        margin: 0 24px 16px;
+        padding: 16px;
+        border-radius: 8px;
+
+        .confirmation-header,
+        .decline-header {
+          display: flex;
+          align-items: center;
+          margin-bottom: 8px;
+
+          .confirmation-icon,
+          .decline-icon {
+            margin-right: 8px;
+            font-size: 16px;
+          }
+
+          strong {
+            color: inherit;
+          }
+        }
+
+        p {
+          margin: 0 0 8px 0;
+          font-size: 14px;
+        }
+
+        .agency-contact {
+          font-size: 14px;
+          color: inherit;
+        }
+      }
+
+      .confirmation-info {
+        background: #d1fae5;
+        border: 1px solid #a7f3d0;
+        color: #065f46;
+      }
+
+      .decline-info {
+        background: #fee2e2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+      }
+
+      .request-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 24px;
+        background: #f9fafb;
+        border-top: 1px solid #f3f4f6;
+
+        .agency-info {
+          font-size: 14px;
+          color: #6b7280;
+
+          strong {
+            color: #111827;
+          }
+        }
+
+        .request-actions {
+          display: flex;
+          gap: 8px;
+
+          button {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+
+            &:disabled {
+              opacity: 0.6;
+              cursor: not-allowed;
+            }
+
+            &.calendar-btn {
+              background: #2563eb;
+              color: white;
+
+              &:hover {
+                background: #1d4ed8;
+              }
+            }
+
+            &.cancel-btn {
+              background: #dc2626;
+              color: white;
+
+              &:hover {
+                background: #b91c1c;
+              }
+            }
+
+            &.disabled-btn {
+              background: #f3f4f6;
+              color: #6b7280;
+              cursor: not-allowed;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .user-tour-requests {
+    .requests-list .request-card {
+      .request-header {
+        padding: 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+
+        .status-badge {
+          align-self: flex-start;
+        }
+      }
+
+      .request-details {
+        padding: 16px;
+
+        .detail-row {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+      }
+
+      .confirmation-info,
+      .decline-info {
+        margin: 0 16px 16px;
+      }
+
+      .request-footer {
+        padding: 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+
+        .request-actions {
+          width: 100%;
+
+          button {
+            flex: 1;
+          }
+        }
+      }
+    }
+  }
+}

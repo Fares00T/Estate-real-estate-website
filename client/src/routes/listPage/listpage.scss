@@ -4,11 +4,37 @@
   display: flex;
   height: 100%;
 
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      background-color: #4b7bec;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+    }
+
+    span {
+      font-weight: bold;
+    }
+  }
+
   .listContainer {
     flex: 3;
     height: 100%;
 
-    .wrapper{
+    .wrapper {
       height: 100%;
       padding-right: 50px;
       display: flex;
@@ -16,14 +42,14 @@
       gap: 50px;
       overflow-y: scroll;
       padding-bottom: 50px;
+      scrollbar-width: none;
     }
   }
   .mapContainer {
     flex: 2;
     height: 100%;
-    background-color: #fcf5f3;
 
-    @include md{
+    @include md {
       display: none;
     }
   }

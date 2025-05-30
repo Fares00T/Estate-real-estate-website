@@ -7,6 +7,19 @@ import { useNavigate, useLoaderData, useParams } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { AuthContext } from "../../context/AuthContext";
 import Chat from "../../components/chat/Chat.jsx";
+import TourRequestModal from "../../components/tourRequestModal/TourRequestModal.jsx";
+import {
+  FaMapMarkerAlt,
+  FaSchool,
+  FaUniversity,
+  FaBus,
+  FaShoppingCart,
+  FaCar,
+  FaMosque,
+  FaPills,
+  FaChild,
+  FaGraduationCap,
+} from "react-icons/fa";
 
 export default function ListDetails() {
   const post = useLoaderData();
@@ -16,34 +29,57 @@ export default function ListDetails() {
   const [showModal, setShowModal] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [chatData, setChatData] = useState(null);
-  const [postId, setPostId] = useState(null);
-  console.log("Post ID:", postId); // Add this to check if postId is valid
-  {
-    /*console.log("Post data:", post);
-  useEffect(() => {
-    const incrementViews = async () => {
-      try {
-        await apiRequest.post(`/posts/view/${post.id}`); // Adjust if route differs
-      } catch (err) {
-        console.error("Failed to increment views:", err);
-      }
-    };
+  const [showTourModal, setShowTourModal] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState(null);
+  const [feedbackType, setFeedbackType] = useState("error"); // or "success"
 
-    if (post?.id) {
-      incrementViews();
-    }
-  }, [post?.id]);
-  */
-  }
-  // Make sure setPostId is being called with a valid ID before the fetch call.
+  const nearbyPlaces = [
+    { label: "Mosque", value: post.postDetail.mosque, icon: <FaMosque /> },
+    {
+      label: "Kindergarten",
+      value: post.postDetail.kindergarten,
+      icon: <FaChild />,
+    },
+    {
+      label: "Primary School",
+      value: post.postDetail.primarySchool,
+      icon: <FaSchool />,
+    },
+    {
+      label: "Middle School",
+      value: post.postDetail.middleSchool,
+      icon: <FaGraduationCap />,
+    },
+    {
+      label: "High School",
+      value: post.postDetail.highSchool,
+      icon: <FaGraduationCap />,
+    },
+    {
+      label: "University",
+      value: post.postDetail.university,
+      icon: <FaUniversity />,
+    },
+    { label: "Pharmacy", value: post.postDetail.pharmacy, icon: <FaPills /> },
+    {
+      label: "Transportation",
+      value: post.postDetail.transportation,
+      icon: <FaBus />,
+    },
+    {
+      label: "Commercial Area",
+      value: post.postDetail.commercialArea,
+      icon: <FaShoppingCart />,
+    },
+    { label: "Car Park", value: post.postDetail.carPark, icon: <FaCar /> },
+  ];
 
   const handleDelete = async () => {
     try {
       const response = await apiRequest.delete(`/posts/${post.id}`);
-      /*
       if (response.status === 200) {
         navigate("/admin"); // Redirect after deletion
-      }*/
+      }
     } catch (err) {
       console.log(err);
       alert("Failed to delete post.");
@@ -100,14 +136,25 @@ export default function ListDetails() {
         <div className="wrapper">
           <Slider images={post.images} />
           <div className="info">
+            {post.type === "rent" ? "For Rent" : "For Sale"}
+
             {currentUser?.id === post.userId && (
               <button
                 onClick={() => navigate(`/edit-post/${post.id}`)}
-                style={{ backgroundColor: "#007bff", color: "white" }}
+                style={{
+                  backgroundColor: "#007bff",
+                  color: "white",
+                  padding: "10px 20px",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                  marginRight: "10px",
+                }}
               >
                 Edit Post
               </button>
             )}
+
             <div className="top">
               <div className="post">
                 <h1>{post.title}</h1>
@@ -119,7 +166,11 @@ export default function ListDetails() {
                 </div>
                 <div className="price">DZD {post.price}</div>
                 <div className="views">
-                  {/*{typeof post.views === "number" ? post.views : "Loading..."}*/}
+                  viewed by :{" "}
+                  {typeof post.postDetail.views === "number"
+                    ? post.postDetail.views
+                    : "Loading..."}{" "}
+                  pepole
                 </div>
               </div>
               <div className="user">
@@ -142,6 +193,27 @@ export default function ListDetails() {
       <div className="features">
         <div className="wrapper">
           <p className="title">General</p>
+          <p>Property ID: {post.postDetail.Matricule}</p>
+          {currentUser?.role === "client" &&
+            currentUser?.id !== post.userId &&
+            post.user.role === "agency" && (
+              <>
+                <button
+                  className="btn request-tour-btn"
+                  onClick={() => setShowTourModal(true)}
+                >
+                  Request Tour
+                </button>
+
+                {showTourModal && (
+                  <TourRequestModal
+                    post={post}
+                    currentUser={currentUser}
+                    onClose={() => setShowTourModal(false)}
+                  />
+                )}
+              </>
+            )}
           <div className="listVertical">
             <div className="feature">
               <img src="/utility.png" alt="" />
@@ -167,9 +239,15 @@ export default function ListDetails() {
             </div>
             <div className="feature">
               <img src="/fee.png" alt="" />
+
               <div className="featureText">
-                <span>Income Policy</span>
-                <p>{post.postDetail.income}</p>
+                <span> is is Furnished</span>
+
+                {post.postDetail.pet === "yes" ? (
+                  <p> yes it's Furnished</p>
+                ) : (
+                  <p>not Furnished</p>
+                )}
               </div>
             </div>
           </div>
@@ -177,7 +255,9 @@ export default function ListDetails() {
           <div className="sizes">
             <div className="size">
               <img src="/size.png" alt="" />
-              <span>{post.postDetail.size} sqft</span>
+              <span>
+                {post.postDetail.size} m<sup>2</sup>
+              </span>
             </div>
             <div className="size">
               <img src="/bed.png" alt="" />
@@ -187,6 +267,18 @@ export default function ListDetails() {
               <img src="/bath.png" alt="" />
               <span>{post.bathroom} bathroom</span>
             </div>
+          </div>
+          <p className="title">Nearby Places</p>
+          <div className="nearbyList">
+            {nearbyPlaces.map(
+              (item, index) =>
+                item.value === "yes" && (
+                  <div className="nearbyItem" key={index}>
+                    <div className="icon">{item.icon}</div>
+                    <span>{item.label}</span>
+                  </div>
+                )
+            )}
           </div>
           <p className="title">Location</p>
           <div className="mapContainer">

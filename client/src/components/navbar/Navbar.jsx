@@ -36,7 +36,13 @@ function Navbar() {
             {currentUser?.role === "agency" && (
               <span className="agency-label">Agency</span>
             )}
-            <img src={currentUser.avatar || "/noavatar.jpg"} alt="" />
+            <a href="/profile">
+              <img
+                className="userimg"
+                src={currentUser.avatar || "/noavatar.jpg"}
+                alt=""
+              />
+            </a>
             <span>{currentUser.username}</span>
 
             <Link to="/profile" className="profile">
@@ -61,8 +67,31 @@ function Navbar() {
           <a href="/">About</a>
           <a href="/">Contact</a>
           <a href="/">Agents</a>
-          <a href="/">Sign in</a>
-          <a href="/">Sign up</a>
+          {currentUser ? (
+            <div className="user">
+              {currentUser?.role === "agency" && (
+                <span className="agency-label">Agency</span>
+              )}
+              <span>{currentUser.username}</span>
+              <a href="/profile">
+                <img
+                  className="userimg"
+                  src={currentUser.avatar || "/noavatar.jpg"}
+                  alt=""
+                />
+              </a>
+              <Link to="/profile" className="profilemobile">
+                <span className="profilemobile">Profile</span>
+              </Link>
+            </div>
+          ) : (
+            <>
+              <div className="notloggedin">
+                <a href="/login">Sign in</a>
+                <a href="/register">Sign up</a> {/* className="register" */}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </nav>

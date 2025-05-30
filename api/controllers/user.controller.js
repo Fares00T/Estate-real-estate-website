@@ -259,3 +259,69 @@ export const getAgency = async (req, res) => {
     res.status(500).json({ message: "Failed to get users!" });
   }
 };
+
+// Add these functions to your user.controller.js
+
+export const getUserStatistics = async (req, res) => {
+  try {
+    const totalUsers = await prisma.user.count();
+    const totalAgencies = await prisma.user.count({
+      where: { role: "agency" },
+    });
+    const totalClients = await prisma.user.count({
+      where: { role: "client" },
+    });
+
+    const usersByRole = await prisma.user.groupBy({
+      by: ["role"],
+      _count: {
+        role: true,
+      },
+    });
+
+    const usersThisMonth = await prisma.user.count({
+      where: {
+        createdAt: {
+          gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+        },
+      },
+    });
+
+    res.status(200).json({
+      totalUsers,
+      totalAgencies,
+      totalClients,
+      usersByRole,
+      usersThisMonth,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to get user statistics" });
+  }
+};
+
+export const bulkDeleteUsers = async (req, res) => {
+  const { userIds } = req.body;
+  const currentUserId = req.userId;
+
+  try {
+    // Prevent admin from deleting themselves
+    if (userIds.includes(currentUserId)) {
+      return res
+        .status(400)
+        .json({ message: "Cannot delete your own account" });
+    }
+
+    await prisma.user.deleteMany({
+      where: {
+        id: { in: userIds },
+        role: { not: "admin" }, // Prevent deleting other admins
+      },
+    });
+
+    res.status(200).json({ message: "Users deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to delete users" });
+  }
+};
