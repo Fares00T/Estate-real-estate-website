@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 export const getPosts = async (req, res) => {
   const query = req.query;
   console.log(query);
+
   try {
     const posts = await prisma.post.findMany({
       where: {
@@ -24,17 +25,18 @@ export const getPosts = async (req, res) => {
             username: true,
           },
         },
+        postDetail: {
+          select: {
+            views: true,
+          },
+        },
       },
     });
 
-    console.log(posts);
-
-    // setTimeout(() => {
     res.status(200).json(posts);
-    // }, 3000);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Failed to get posts" });
+  } catch (error) {
+    console.error("Failed to fetch posts:", error);
+    res.status(500).json({ message: "Failed to fetch posts" });
   }
 };
 

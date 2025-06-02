@@ -24,71 +24,83 @@ export default function UserTourRequests({ currentUser }) {
   };
 
   const handleCancelRequest = async (requestId) => {
-    if (confirm("Are you sure you want to cancel this tour request?")) {
-      try {
-        await apiRequest.put(`/tours/${requestId}`, { status: "cancelled" });
-        
-        // Update local state
-        setTourRequests(prev => 
-          prev.map(request => 
-            request.id === requestId 
-              ? { ...request, status: "cancelled" }
-              : request
-          )
-        );
-        
-        alert("Tour request cancelled successfully.");
-      } catch (err) {
-        console.error(err);
-        alert(err.response?.data?.message || "Failed to cancel tour request.");
-      }
+    try {
+      await apiRequest.put(`/tours/${requestId}`, { status: "cancelled" });
+
+      // Update local state
+      setTourRequests((prev) =>
+        prev.map((request) =>
+          request.id === requestId
+            ? { ...request, status: "cancelled" }
+            : request
+        )
+      );
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Failed to cancel tour request.");
     }
   };
 
   const handleAddToCalendar = (request) => {
-    if (request.status === "confirmed" && request.confirmedDate && request.confirmedTime) {
+    if (
+      request.status === "confirmed" &&
+      request.confirmedDate &&
+      request.confirmedTime
+    ) {
       // Create calendar event
-      const startDate = new Date(`${request.confirmedDate}T${request.confirmedTime}`);
+      const startDate = new Date(
+        `${request.confirmedDate}T${request.confirmedTime}`
+      );
       const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour duration
-      
+
       const event = {
         title: `Property Tour - ${request.property?.title}`,
-        start: startDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z',
-        end: endDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z',
+        start: startDate.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z",
+        end: endDate.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z",
         description: `Property tour at ${request.property?.address}`,
         location: request.property?.address,
       };
 
-      const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${event.start}/${event.end}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location || '')}`;
-      
-      window.open(calendarUrl, '_blank');
+      const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+        event.title
+      )}&dates=${event.start}/${event.end}&details=${encodeURIComponent(
+        event.description
+      )}&location=${encodeURIComponent(event.location || "")}`;
+
+      window.open(calendarUrl, "_blank");
     }
   };
 
   const getStatusClass = (status) => {
     switch (status) {
-      case "pending": return "status-pending";
-      case "confirmed": return "status-confirmed";
-      case "declined": return "status-declined";
-      case "completed": return "status-completed";
-      case "cancelled": return "status-cancelled";
-      default: return "status-default";
+      case "pending":
+        return "status-pending";
+      case "confirmed":
+        return "status-confirmed";
+      case "declined":
+        return "status-declined";
+      case "completed":
+        return "status-completed";
+      case "cancelled":
+        return "status-cancelled";
+      default:
+        return "status-default";
     }
   };
 
   const formatTime = (time) => {
-    const [hours, minutes] = time.split(':');
+    const [hours, minutes] = time.split(":");
     const hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const ampm = hour >= 12 ? "PM" : "AM";
     const displayHour = hour % 12 || 12;
     return `${displayHour}:${minutes} ${ampm}`;
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
@@ -118,7 +130,14 @@ export default function UserTourRequests({ currentUser }) {
       ) : (
         <div className="requests-list">
           {tourRequests.map((request) => (
-            <div key={request.id} className={`request-card ${request.status === "completed" || request.status === "cancelled" ? "completed" : ""}`}>
+            <div
+              key={request.id}
+              className={`request-card ${
+                request.status === "completed" || request.status === "cancelled"
+                  ? "completed"
+                  : ""
+              }`}
+            >
               <div className="request-header">
                 <div className="property-info">
                   <h4>{request.property?.title || "Property"}</h4>
@@ -126,7 +145,9 @@ export default function UserTourRequests({ currentUser }) {
                     {request.property?.address}, {request.property?.city}
                   </p>
                 </div>
-                <div className={`status-badge ${getStatusClass(request.status)}`}>
+                <div
+                  className={`status-badge ${getStatusClass(request.status)}`}
+                >
                   {request.status.toUpperCase()}
                 </div>
               </div>
@@ -135,24 +156,28 @@ export default function UserTourRequests({ currentUser }) {
                 <div className="detail-row">
                   <div className="detail-group">
                     <label>
-                      {request.status === "confirmed" ? "Confirmed Tour Date" : "Preferred Tour Date"}
+                      {request.status === "confirmed"
+                        ? "Confirmed Tour Date"
+                        : "Preferred Tour Date"}
                     </label>
                     <div className="detail-value">
-                      📅 {request.status === "confirmed" && request.confirmedDate
+                      📅{" "}
+                      {request.status === "confirmed" && request.confirmedDate
                         ? formatDate(request.confirmedDate)
-                        : formatDate(request.preferredDate)
-                      }
+                        : formatDate(request.preferredDate)}
                     </div>
                   </div>
                   <div className="detail-group">
                     <label>
-                      {request.status === "confirmed" ? "Confirmed Time" : "Preferred Time"}
+                      {request.status === "confirmed"
+                        ? "Confirmed Time"
+                        : "Preferred Time"}
                     </label>
                     <div className="detail-value">
-                      🕐 {request.status === "confirmed" && request.confirmedTime
+                      🕐{" "}
+                      {request.status === "confirmed" && request.confirmedTime
                         ? formatTime(request.confirmedTime)
-                        : formatTime(request.preferredTime)
-                      }
+                        : formatTime(request.preferredTime)}
                     </div>
                   </div>
                 </div>
@@ -166,7 +191,9 @@ export default function UserTourRequests({ currentUser }) {
 
                 <div className="detail-group">
                   <label>Requested</label>
-                  <div className="detail-value">{formatDate(request.createdAt)}</div>
+                  <div className="detail-value">
+                    {formatDate(request.createdAt)}
+                  </div>
                 </div>
               </div>
 
@@ -179,12 +206,15 @@ export default function UserTourRequests({ currentUser }) {
                   <p>
                     Your tour has been confirmed for{" "}
                     <strong>
-                      {formatDate(request.confirmedDate)} at {formatTime(request.confirmedTime)}
-                    </strong>.
-                    The agency will contact you shortly with additional details.
+                      {formatDate(request.confirmedDate)} at{" "}
+                      {formatTime(request.confirmedTime)}
+                    </strong>
+                    . The agency will contact you shortly with additional
+                    details.
                   </p>
                   <div className="agency-contact">
-                    <strong>Contact:</strong> {request.agency?.agencyName || request.agency?.username}
+                    <strong>Contact:</strong>{" "}
+                    {request.agency?.agencyName || request.agency?.username}
                     {request.agency?.phone && ` (${request.agency.phone})`}
                   </div>
                 </div>
@@ -196,14 +226,20 @@ export default function UserTourRequests({ currentUser }) {
                     <span className="decline-icon">❌</span>
                     <strong>Tour Declined</strong>
                   </div>
-                  <p><strong>Reason:</strong> {request.declineReason}</p>
+                  <p>
+                    <strong>Reason:</strong> {request.declineReason}
+                  </p>
                 </div>
               )}
 
               <div className="request-footer">
                 <div className="agency-info">
                   <span>Agency: </span>
-                  <strong>{request.agency?.agencyName || request.agency?.username || "Unknown Agency"}</strong>
+                  <strong>
+                    {request.agency?.agencyName ||
+                      request.agency?.username ||
+                      "Unknown Agency"}
+                  </strong>
                 </div>
                 <div className="request-actions">
                   {request.status === "pending" && (
@@ -232,9 +268,11 @@ export default function UserTourRequests({ currentUser }) {
                     </>
                   )}
 
-                  {(request.status === "completed" || request.status === "declined" || request.status === "cancelled") && (
+                  {(request.status === "completed" ||
+                    request.status === "declined" ||
+                    request.status === "cancelled") && (
                     <button className="disabled-btn" disabled>
-                      View Summary
+                      Cancelled
                     </button>
                   )}
                 </div>
