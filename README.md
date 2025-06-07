@@ -80,7 +80,7 @@ cd real-estate-platform
 cd server
 npm install
 npx prisma generate
-nodemone App.js
+nodemon App.js
 ```
 
 ### 3. Start Frontend
@@ -96,7 +96,7 @@ npm run dev
 ```bash
 cd socket
 npm install
-nodemone App.js
+nodemon App.js
 
 ## 📌 Future Improvements
 
