@@ -61,7 +61,7 @@ Api/             # Node.js backend
   └── prisma/
   └── routes/
 
-socket/             # socket.io
+Socket/             # socket.io
 └── App.js
 ```
 
