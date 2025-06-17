@@ -216,6 +216,7 @@ function NewPostPage() {
                 value={form.latitude}
                 onChange={handleChange}
                 disabled
+                required
               />
             </FormControl>
 
@@ -227,6 +228,7 @@ function NewPostPage() {
                 value={form.longitude}
                 onChange={handleChange}
                 disabled
+                required
               />
               <Button
                 variant="outlined"
@@ -249,7 +251,7 @@ function NewPostPage() {
 
             <div className="item">
               <label htmlFor="type">Type</label>
-              <select name="type">
+              <select name="type" required>
                 <option value="rent">Rent</option>
                 <option value="buy">Buy</option>
               </select>
@@ -296,7 +298,7 @@ function NewPostPage() {
 
             <div className="item">
               <label htmlFor="utilities">Utilities Included</label>
-              <select name="utilities" id="utilities" defaultValue="">
+              <select name="utilities" id="utilities" defaultValue="" required>
                 <option value="" disabled hidden>
                   Select...
                 </option>
@@ -307,7 +309,7 @@ function NewPostPage() {
 
             <div className="item">
               <label htmlFor="pet">Pets Allowed</label>
-              <select name="pet" id="pet" defaultValue="">
+              <select name="pet" id="pet" defaultValue="" required>
                 <option value="" disabled hidden>
                   Select...
                 </option>
@@ -317,7 +319,7 @@ function NewPostPage() {
             </div>
             <div className="item">
               <label htmlFor="Furnished">Furnished?</label>
-              <select name="Furnished" id="Furnished" defaultValue="">
+              <select name="Furnished" id="Furnished" defaultValue="" required>
                 <option value="" disabled hidden>
                   Select...
                 </option>
