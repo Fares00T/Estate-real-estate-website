@@ -138,23 +138,6 @@ export default function ListDetails() {
           <div className="info">
             {post.type === "rent" ? "For Rent" : "For Sale"}
 
-            {currentUser?.id === post.userId && (
-              <button
-                onClick={() => navigate(`/edit-post/${post.id}`)}
-                style={{
-                  backgroundColor: "#007bff",
-                  color: "white",
-                  padding: "10px 20px",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                  marginRight: "10px",
-                }}
-              >
-                Edit Post
-              </button>
-            )}
-
             <div className="top">
               <div className="post">
                 <h1>{post.title}</h1>
@@ -192,6 +175,14 @@ export default function ListDetails() {
       </div>
       <div className="features">
         <div className="wrapper">
+          {currentUser?.id === post.userId && (
+            <button
+              onClick={() => navigate(`/edit-post/${post.id}`)}
+              className="btn"
+            >
+              Edit Post
+            </button>
+          )}
           <p className="title">General</p>
           <p>Property ID: {post.postDetail.Matricule}</p>
           {currentUser?.role === "client" &&

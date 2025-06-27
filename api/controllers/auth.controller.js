@@ -31,16 +31,16 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
     // CHECK IF THE USER EXISTS
 
     const user = await prisma.user.findUnique({
-      where: { username },
+      where: { email },
     });
 
-    if (!user) return res.status(400).json({ message: "Invalid username" });
+    if (!user) return res.status(400).json({ message: "Invalid email" });
 
     // CHECK IF THE PASSWORD IS CORRECT
 

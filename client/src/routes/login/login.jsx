@@ -17,12 +17,12 @@ function Login() {
     setError("");
     const formData = new FormData(e.target);
 
-    const username = formData.get("username");
+    const email = formData.get("email");
     const password = formData.get("password");
 
     try {
       const res = await apiRequest.post("/auth/login", {
-        username,
+        email,
         password,
       });
 
@@ -44,12 +44,12 @@ function Login() {
         <form onSubmit={handleSubmit}>
           <h1>Welcome</h1>
           <input
-            name="username"
+            name="email"
             required
             minLength={3}
             maxLength={20}
             type="text"
-            placeholder="Username"
+            placeholder="Email"
           />
           <input
             name="password"

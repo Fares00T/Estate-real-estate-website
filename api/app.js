@@ -24,14 +24,6 @@ app.use(
   })
 );
 
-/*
-app.use(
-  cors({
-    origin: ["http://localhost:5173", "https://pfe-o2d3.vercel.app"],
-    credentials: true,
-  })
-);
-*/
 app.use("/api/auth", authRoute);
 app.use("/api/test", testRoute);
 app.use("/api/users", userRoute);

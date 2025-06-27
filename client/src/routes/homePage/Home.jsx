@@ -19,20 +19,6 @@ const Home = () => {
             Start your journey to a new place you'll love today!
           </p>
           <SearchBar />
-          <div className="infos">
-            <div className="info1">
-              <h1>0</h1>
-              <h2>Years of exp</h2>
-            </div>
-            <div className="info2">
-              <h1>0</h1>
-              <h2>awards</h2>
-            </div>
-            <div className="info3">
-              <h1>0</h1>
-              <h2>Property Ready</h2>
-            </div>
-          </div>
         </div>
       </div>
 

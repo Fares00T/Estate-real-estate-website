@@ -508,7 +508,7 @@ function AdminPage() {
                   height={300}
                   slotProps={{
                     legend: {
-                      direction: "row",
+                      direction: "horizontal",
                       position: { vertical: "bottom", horizontal: "middle" },
                     },
                   }}
@@ -529,31 +529,6 @@ function AdminPage() {
                 />
               </Paper>
             </Grid>
-
-            <Grid item xs={12}>
-              <Paper className="chart-container">
-                <Typography variant="h6" className="chart-title">
-                  Daily Activity
-                </Typography>
-                <LineChart
-                  dataset={getMonthlyData()}
-                  xAxis={[{ scaleType: "point", dataKey: "date" }]}
-                  series={[
-                    {
-                      dataKey: "users",
-                      label: "Users Registered",
-                      color: "#1976d2",
-                    },
-                    {
-                      dataKey: "posts",
-                      label: "Posts Created",
-                      color: "#f57c00",
-                    },
-                  ]}
-                  height={400}
-                />
-              </Paper>
-            </Grid>
           </Grid>
         </TabPanel>
 
@@ -561,7 +536,7 @@ function AdminPage() {
         <TabPanel value={tabValue} index={1}>
           <Box className="section-header">
             <Typography variant="h5">User Management</Typography>
-            <Stack direction="row" spacing={2}>
+            <Stack direction="horizontal" spacing={2}>
               <Button
                 variant="outlined"
                 startIcon={<DownloadIcon />}
@@ -596,13 +571,15 @@ function AdminPage() {
                   className="search-field"
                 />
               </Grid>
-              <Grid item xs={12} md={4}>
-                <FormControl fullWidth>
+              <Grid item xs={12} md={8}>
+                <FormControl fullWidth sx={{ width: 200 }} md={{ width: 200 }}>
                   <InputLabel>Filter by Role</InputLabel>
                   <Select
                     value={selectedUserRole}
                     onChange={(e) => setSelectedUserRole(e.target.value)}
-                    label="Filter by Role"
+                    label="All Roles"
+                    fullWidth
+                    sx={{ height: 56 }}
                   >
                     <MenuItem value="">All Roles</MenuItem>
                     <MenuItem value="admin">Admin</MenuItem>
@@ -713,7 +690,7 @@ function AdminPage() {
                         {new Date(user.createdAt).toLocaleDateString()}
                       </TableCell>
                       <TableCell>
-                        <Stack direction="row" spacing={1}>
+                        <Stack direction="horizontal" spacing={1}>
                           <FormControl size="small">
                             <Select
                               value={user.role}
@@ -753,7 +730,7 @@ function AdminPage() {
         <TabPanel value={tabValue} index={2}>
           <Box className="section-header">
             <Typography variant="h5">Property Management</Typography>
-            <Stack direction="row" spacing={2}>
+            <Stack direction="horizontal" spacing={2}>
               <Button
                 variant="outlined"
                 startIcon={<DownloadIcon />}
@@ -789,7 +766,7 @@ function AdminPage() {
                 />
               </Grid>
               <Grid item xs={12} md={4}>
-                <FormControl fullWidth>
+                <FormControl fullWidth sx={{ width: 200 }} md={{ width: 200 }}>
                   <InputLabel>Filter by Type</InputLabel>
                   <Select
                     value={selectedPostType}
@@ -803,7 +780,7 @@ function AdminPage() {
                 </FormControl>
               </Grid>
               <Grid item xs={12} md={4}>
-                <FormControl fullWidth>
+                <FormControl fullWidth sx={{ width: 200 }} md={{ width: 200 }}>
                   <InputLabel>Filter by Property</InputLabel>
                   <Select
                     value={selectedProperty}
@@ -914,7 +891,7 @@ function AdminPage() {
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Stack direction="row" spacing={1}>
+                      <Stack direction="horizontal" spacing={1}>
                         <Tooltip title="View Property">
                           <IconButton
                             color="primary"
@@ -1127,12 +1104,12 @@ function AdminPage() {
               </Paper>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid container item xs={12}>
               <Paper className="system-actions">
                 <Typography variant="h6" gutterBottom>
                   System Actions
                 </Typography>
-                <Stack direction="row" spacing={2} flexWrap="wrap">
+                <Stack direction="horizontal" spacing={2} flexWrap="wrap">
                   <Button
                     variant="outlined"
                     startIcon={<DownloadIcon />}

@@ -110,7 +110,6 @@ function Chat({ chats, receiverId, onClose }) {
     };
   }, [socket, chat]);
   console.log("receiverId in Chat:", receiverId);
-  console.log("Chats prop:", chats);
 
   // Sort chats here, outside JSX
   const sortedChats = [...chats].sort((a, b) => {
@@ -129,6 +128,7 @@ function Chat({ chats, receiverId, onClose }) {
         <h1>Messages</h1>
         {[...chats].reverse().map((c) => {
           const isDeleted = !c.receiver;
+          const isAdmin = c.receiver?.role === "admin";
 
           return (
             <div
@@ -138,7 +138,15 @@ function Chat({ chats, receiverId, onClose }) {
               style={{ cursor: isDeleted ? "default" : "pointer" }}
             >
               <img src={c.receiver?.avatar || "/noavatar.jpg"} alt="avatar" />
-              <span>{c.receiver?.username || "deleted user"}</span>
+              <span>
+                {c.receiver?.username || "deleted user"}
+                {isAdmin && (
+                  <span className="adminTag" style={{ color: "red" }}>
+                    {" "}
+                    [Admin]
+                  </span>
+                )}
+              </span>
               <p>{c.lastMessage || "No message yet"}</p>
             </div>
           );

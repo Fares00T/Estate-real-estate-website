@@ -26,3 +26,4 @@ ALTER TABLE `TourRequest` ADD CONSTRAINT `TourRequest_clientId_fkey` FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE `TourRequest` ADD CONSTRAINT `TourRequest_agencyId_fkey` FOREIGN KEY (`agencyId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
