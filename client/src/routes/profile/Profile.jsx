@@ -99,10 +99,8 @@ function Profile() {
                 </span>
                 {/* Check for missing fields */}
                 {(!currentUser.agencyName ||
-                  !currentUser.avatar ||
                   !currentUser.location ||
-                  !currentUser.phone ||
-                  !currentUser.website) && (
+                  !currentUser.phone) && (
                   <Alert severity="warning" sx={{ mb: 2 }}>
                     Please complete all your agency details to appear on the
                     agencies page.

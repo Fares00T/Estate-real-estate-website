@@ -39,7 +39,7 @@ router.post(
 
       const mailOptions = {
         from: `"Real Estate App Reports" <${process.env.EMAIL_USER}>`,
-        to: process.env.REPORT_RECEIVER_EMAIL || process.env.EMAIL_USER,
+        to: "estate.dzd@gmail.com",
         subject: `⚠️ Report - ${reportType.toUpperCase()} | Submitted by ${submittedBy}`,
         html: `
           <b>Report Type:</b> ${reportType}<br/>

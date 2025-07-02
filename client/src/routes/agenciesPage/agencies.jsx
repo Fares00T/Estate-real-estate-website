@@ -18,8 +18,7 @@ function AgenciesPage() {
             user.role === "agency" &&
             user.agencyName &&
             user.location &&
-            user.phone &&
-            user.website
+            user.phone
         );
 
         setAgencies(filtered);

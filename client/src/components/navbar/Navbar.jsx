@@ -50,10 +50,6 @@ function Navbar() {
               <Home size={18} />
               <span>Home</span>
             </Link>
-            <Link to="/about" className="nav-link">
-              <FileText size={18} />
-              <span>About</span>
-            </Link>
             <Link to="/agencies" className="nav-link">
               <Users size={18} />
               <span>Agencies</span>
@@ -145,14 +141,6 @@ function Navbar() {
                   >
                     <Home size={20} />
                     <span>Home</span>
-                  </Link>
-                  <Link
-                    to="/about"
-                    className="mobile-nav-link"
-                    onClick={handleMenuItemClick}
-                  >
-                    <FileText size={20} />
-                    <span>About</span>
                   </Link>
                   <Link
                     to="/agencies"

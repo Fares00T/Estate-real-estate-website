@@ -69,14 +69,13 @@ function Chat({ chats, receiverId, onClose }) {
 
     try {
       const res = await apiRequest.post("/messages/" + chat.id, { text });
-      setChat((prev) => ({
-        ...prev,
-        messages: [...prev.messages, res.data],
-      }));
       e.target.reset();
 
+      // Send message via socket to both sender and receiver
       socket.emit("sendMessage", {
         receiverId: chat?.receiver?.id,
+        senderId: currentUser.id,
+        chatId: chat.id,
         data: res.data,
       });
     } catch (err) {
@@ -85,6 +84,14 @@ function Chat({ chats, receiverId, onClose }) {
   };
 
   useEffect(() => {
+    if (socket && currentUser?.id) {
+      socket.emit("newUser", currentUser.id); // match socket code
+    }
+  }, [socket, currentUser?.id]);
+
+  useEffect(() => {
+    if (!chat || !socket) return;
+
     const read = async () => {
       try {
         await apiRequest.put("/chats/read/" + chat.id);
@@ -93,22 +100,28 @@ function Chat({ chats, receiverId, onClose }) {
       }
     };
 
-    if (chat && socket) {
-      socket.on("getMessage", (data) => {
-        if (chat.id === data.chatId) {
-          setChat((prev) => ({
+    const handleMessage = (data) => {
+      if (chat.id === data.chatId) {
+        setChat((prev) => {
+          const exists = prev.messages.some((m) => m.id === data.id);
+          if (exists) return prev;
+          return {
             ...prev,
             messages: [...prev.messages, data],
-          }));
-          read();
-        }
-      });
-    }
+          };
+        });
+
+        read();
+      }
+    };
+
+    socket.on("getMessage", handleMessage);
 
     return () => {
-      socket.off("getMessage");
+      socket.off("getMessage", handleMessage);
     };
   }, [socket, chat]);
+
   console.log("receiverId in Chat:", receiverId);
 
   // Sort chats here, outside JSX

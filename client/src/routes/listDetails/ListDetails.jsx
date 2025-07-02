@@ -144,8 +144,8 @@ export default function ListDetails() {
                 <div className="address">
                   <img src="/pin.png" alt="" />
                   <span>{post.address}</span>
-                  <span>{post.city}</span>
                   <span>{post.district}</span>
+                  <span>{post.city}</span>
                 </div>
                 <div className="price">DZD {post.price}</div>
                 <div className="views">

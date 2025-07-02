@@ -35,7 +35,7 @@ router.post(
 
       const mailOptions = {
         from: `"Real Estate App" <${process.env.EMAIL_USER}>`,
-        to: data.email,
+        to: "estate.dzd@gmail.com",
         subject: `New Agency Application: ${data.agencyName}`,
         text: `
 Submitted By: ${data.submittedBy}

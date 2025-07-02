@@ -9,6 +9,7 @@
   @include md {
     display: flex;
     flex-direction: column;
+    height: 100%;
   }
 
   .feedback-message {
