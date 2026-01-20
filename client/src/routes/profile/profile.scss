@@ -104,19 +104,4 @@
       }
     }
   }
-  .chatContainer {
-    flex: 2;
-    //background-color: #fcf5f3;
-    height: 100%;
-
-    @include md {
-      flex: none;
-      height: max-content;
-    }
-
-    .wrapper {
-      padding: 0px 20px;
-      height: 100%;
-    }
-  }
 }
