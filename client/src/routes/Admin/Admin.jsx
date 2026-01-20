@@ -1,7 +1,7 @@
 // routes/Admin/Admin.jsx
 import { Await, useLoaderData, useNavigate } from "react-router-dom";
 import { Suspense, useState, useContext, useEffect } from "react";
-import "./Admin.scss";
+import "./admin.scss";
 import apiRequest from "../../components/lib/apiRequest";
 import { AuthContext } from "../../context/AuthContext";
 import {

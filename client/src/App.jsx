@@ -18,7 +18,7 @@ import EditPost from "./routes/editpost/EditPost";
 import AgencyApplicationForm from "./routes/agencyForm/agencyForm";
 import AgenciesPage from "./routes/agenciesPage/agencies";
 import ReportPage from "./routes/report/report";
-import AgencyDashboard from "./routes/agencyDashboard/agencyDashboard";
+import AgencyDashboard from "./routes/agencyDashboard/AgencyDashboard";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 
