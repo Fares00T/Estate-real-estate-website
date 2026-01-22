@@ -60,9 +60,6 @@ Api/             # Node.js backend
   └── middleware/
   └── prisma/
   └── routes/
-
-Socket/             # socket.io
-└── App.js
 ```
 
 ## 🧪 How to Run Locally
@@ -91,14 +88,6 @@ npm install
 npm run dev
 ```
 
-### 3. socket.io server 
-
-```bash
-cd socket
-npm install
-nodemon App.js
-```
-
 ## 📌 Future Improvements
 
 * AI-powered recommendations
@@ -111,4 +100,3 @@ nodemon App.js
 3rd Year Computer Science Student, Higher Institute of Sciences
 Supervised by: Prof. Kheira Lakhdari
 Erasmus+ Alumni | Passionate about solving real-world problems with code
-

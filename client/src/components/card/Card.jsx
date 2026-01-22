@@ -1,11 +1,17 @@
 import { Link } from "react-router-dom";
 import "./card.scss";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 
 function Card({ item, onDelete }) {
   const { currentUser } = useContext(AuthContext);
   const isAgency = item.user?.role === "agency";
+  const normalizedPhone = item.user?.phone?.replace(/\D/g, "");
+  const whatsappLink = normalizedPhone
+    ? `https://wa.me/${normalizedPhone}?text=${encodeURIComponent(
+        `Hi, I'm interested in the property "${item.title}" in ${item.district}, ${item.city}. Is it still available?`
+      )}`
+    : null;
   return (
     <div className="card">
       <Link to={`/${item.id}`} className="imageContainer">
@@ -39,6 +45,17 @@ function Card({ item, onDelete }) {
             )}
           </div>
         </div>
+
+        {whatsappLink && currentUser?.id !== item.userId && (
+          <a
+            className="whatsappLink"
+            href={whatsappLink}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Contact via WhatsApp
+          </a>
+        )}
 
         {/* Only show the delete button if onDelete is provided */}
         {onDelete && (

@@ -1,12 +1,11 @@
 import "./listDetails.scss";
 import Slider from "../../components/slider/Slider.jsx";
 import Map from "../../components/map/Map";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import apiRequest from "../../components/lib/apiRequest";
 import { useNavigate, useLoaderData, useParams } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { AuthContext } from "../../context/AuthContext";
-import Chat from "../../components/chat/Chat.jsx";
 import TourRequestModal from "../../components/tourRequestModal/TourRequestModal.jsx";
 import {
   FaMapMarkerAlt,
@@ -27,11 +26,17 @@ export default function ListDetails() {
   const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false);
-  const [chatData, setChatData] = useState(null);
   const [showTourModal, setShowTourModal] = useState(false);
-  const [feedbackMessage, setFeedbackMessage] = useState(null);
-  const [feedbackType, setFeedbackType] = useState("error"); // or "success"
+
+  const buildWhatsAppLink = (phone, title, location) => {
+    if (!phone) return null;
+    const normalizedPhone = phone.replace(/\D/g, "");
+    if (!normalizedPhone) return null;
+    const message = `Hi, I'm interested in the property "${title}" in ${location}. Is it still available?`;
+    return `https://wa.me/${normalizedPhone}?text=${encodeURIComponent(
+      message
+    )}`;
+  };
 
   const nearbyPlaces = [
     { label: "Mosque", value: post.postDetail.mosque, icon: <FaMosque /> },
@@ -99,36 +104,11 @@ export default function ListDetails() {
     }
   };
 
-  const handleMessage = async () => {
-    if (!currentUser) return navigate("/login");
-
-    try {
-      const res = await apiRequest.get("/chats");
-      const existingChat = res.data.find(
-        (chat) =>
-          Array.isArray(chat.users) &&
-          chat.users.some((user) => user.userId === post.user.id)
-      );
-
-      console.log("Existing chat foundd:", existingChat);
-
-      if (existingChat) {
-        setChatData(existingChat);
-      } else {
-        const newChatRes = await apiRequest.post("/chats", {
-          receiverId: post.userId,
-        });
-        console.log("New chat created:", newChatRes.data);
-
-        setChatData(newChatRes.data);
-      }
-
-      setChatOpen(true); // Open the chat
-    } catch (err) {
-      console.log(err);
-      alert("Failed to open chat");
-    }
-  };
+  const whatsappLink = buildWhatsAppLink(
+    post.user?.phone,
+    post.title,
+    `${post.district}, ${post.city}`
+  );
 
   return (
     <div className="singlePage">
@@ -276,11 +256,15 @@ export default function ListDetails() {
             <Map items={[post]} />
           </div>
           <div className="buttons">
-            {currentUser?.id !== post.userId && (
-              <button onClick={handleMessage}>
-                <img src="/chat.png" alt="" />
-                Send a Message
-              </button>
+            {currentUser?.id !== post.userId && whatsappLink && (
+              <a
+                className="whatsappButton"
+                href={whatsappLink}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span>Contact via WhatsApp</span>
+              </a>
             )}
 
             {currentUser?.role === "admin" && (
@@ -299,12 +283,6 @@ export default function ListDetails() {
               {saved ? "Place Saved" : "Save the Place"}
             </button>
           </div>
-          {chatOpen && chatData && (
-            <Chat
-              chats={[{ ...chatData, receiver: post.user }]} // pass receiver correctly
-              onClose={() => setChatOpen(false)}
-            />
-          )}
         </div>
       </div>
 

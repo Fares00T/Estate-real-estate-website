@@ -155,5 +155,21 @@
         background-color: #c82333;
       }
     }
+
+    .whatsappLink {
+      align-self: flex-start;
+      background-color: #25d366;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: #1ebe5b;
+      }
+    }
   }
 }

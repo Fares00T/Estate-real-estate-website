@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./Report.scss";
+import "./report.scss";
 
 export default function ReportPage() {
   const [reportType, setReportType] = useState("post");
